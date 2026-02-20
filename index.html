@@ -97,12 +97,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             z-index: 2;
             pointer-events: none;
-            mask-image: radial-gradient(circle 200px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
-            -webkit-mask-image: radial-gradient(circle 200px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
+            mask-image: radial-gradient(circle 150px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
+            -webkit-mask-image: radial-gradient(circle 150px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
             transition: backdrop-filter 0.3s ease;
         }
 
@@ -873,6 +873,7 @@
                 camera.updateProjectionMatrix();
                 points.material.size = Math.max(0.0015, r / 300);
                 points.material.color.setHex(0x008080);
+                points.scale.setScalar(0.75);
                 scene.add(points);
             },
             undefined,
@@ -906,6 +907,7 @@
 
             const material = new THREE.PointsMaterial({ size: 0.003, vertexColors: true, transparent: true, opacity: 0.8 });
             const points = new THREE.Points(geometry, material);
+            points.scale.setScalar(0.75);
             scene.add(points);
             window.fallbackPoints = points;
         }
