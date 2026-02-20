@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | C4 Studios</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italianno&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --c-bg-base: #0a0f0a;
+            --c-bg-overlay: rgba(0, 255, 100, 0.03);
+            --c-text-main: #b8ffcc;
+            --c-text-muted: #5a8f6a;
+            --c-accent: #00ff6a;
+            --c-secondary-accent: #39ff85;
+            --c-golden: #00c94a;
+
+            --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
+
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-script: 'Italianno', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--c-bg-base);
+            font-family: var(--font-serif);
+            min-height: 100vh;
+            color: var(--c-text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0.12;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            filter: contrast(120%);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 5rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(0, 255, 106, 0.15);
+            margin-bottom: 3rem;
+        }
+
+        .brand {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-style: italic;
+            color: var(--c-text-main);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .brand:hover {
+            color: var(--c-accent);
+        }
+
+        .nav {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .nav-link {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--c-text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--c-accent);
+        }
+
+        /* Page Title */
+        .page-title {
+            font-family: var(--font-serif);
+            font-size: 4rem;
+            font-weight: 400;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--c-text-main) 0%, var(--c-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--c-text-muted);
+            margin-bottom: 4rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Project Cards */
+        .projects-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .project-card {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 255, 100, 0.02);
+            border: 1px solid rgba(0, 255, 106, 0.1);
+            border-radius: 8px;
+            transition: all 0.4s var(--ease-fluid);
+        }
+
+        .project-card:hover {
+            background: rgba(0, 255, 100, 0.04);
+            border-color: rgba(0, 255, 106, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Mini Point Cloud Container */
+        .preview-container {
+            width: 280px;
+            height: 200px;
+            background: #050805;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Project Info */
+        .project-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0.5rem 0;
+        }
+
+        .project-category {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            margin-bottom: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .project-title {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+            color: var(--c-text-main);
+        }
+
+        .project-description {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--c-text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--c-text-muted);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meta-label {
+            color: var(--c-accent);
+            opacity: 0.6;
+        }
+
+        .project-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-small {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(0, 255, 106, 0.25);
+            color: var(--c-text-main);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--c-accent);
+            background: rgba(0, 255, 106, 0.06);
+        }
+
+        /* Loading state */
+        .preview-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--c-text-muted);
+            pointer-events: none;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 6rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 255, 106, 0.1);
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--c-text-muted);
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                padding: 2rem;
+            }
+            
+            .project-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-container {
+                width: 100%;
+                height: 220px;
+            }
+            
+            .page-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    
+    <div class="container">
+        <header class="header">
+            <a href="index.html" class="brand">C4 Studios</a>
+            <nav class="nav">
+                <a href="projects.html" class="nav-link active">Projects</a>
+                <a href="index.html" class="nav-link">Capabilities</a>
+            </nav>
+        </header>
+
+        <h1 class="page-title">Selected Work</h1>
+        <p class="page-subtitle">
+            A collection of precision-engineered solutions spanning mechanical design, 
+            3D scanning, and computational geometry. Each project represents a unique 
+            challenge solved through technical rigor and creative problem-solving.
+        </p>
+
+        <div class="projects-grid">
+            <!-- Project 1 -->
+            <article class="project-card">
+                <div class="preview-container" id="preview-1">
+                    <div class="preview-loading">Loading point cloud...</div>
+                </div>
+                <div class="project-info">
+                    <span class="project-category">Reverse Engineering</span>
+                    <h2 class="project-title">Vintage Component Scan</h2>
+                    <p class="project-description">
+                        High-resolution 3D scan of obsolete industrial components for 
+                        manufacturing reproduction. Sub-millimeter accuracy captured 
+                        using structured light scanning.
+                    </p>
+                    <div class="project-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Points:</span>
+                            <span>8,000</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Accuracy:</span>
+                            <span>±0.05mm</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Year:</span>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                    <div class="project-actions">
+                        <a href="#" class="btn-small btn-outline">View Full Scan</a>
+                        <a href="#" class="btn-small btn-outline">Case Study</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Project 2 -->
+            <article class="project-card">
+                <div class="preview-container" id="preview-2">
+                    <div class="preview-loading">Loading point cloud...</div>
+                </div>
+                <div class="project-info">
+                    <span class="project-category">Topographic Survey</span>
+                    <h2 class="project-title">Terrain Analysis — Alpine Site</h2>
+                    <p class="project-description">
+                        LiDAR-based topographic survey for architectural planning. 
+                        Point cloud processed to generate contour maps, slope analysis, 
+                        and drainage modeling for a remote alpine development site.
+                    </p>
+                    <div class="project-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Points:</span>
+                            <span>10,000</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Area:</span>
+                            <span>12 hectares</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Year:</span>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                    <div class="project-actions">
+                        <a href="#" class="btn-small btn-outline">View Full Scan</a>
+                        <a href="#" class="btn-small btn-outline">Case Study</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Project 3 -->
+            <article class="project-card">
+                <div class="preview-container" id="preview-3">
+                    <div class="preview-loading">Loading point cloud...</div>
+                </div>
+                <div class="project-info">
+                    <span class="project-category">Mechanical Design</span>
+                    <h2 class="project-title">Precision Gear Assembly</h2>
+                    <p class="project-description">
+                        Custom gear train designed for high-torque, low-speed applications 
+                        in automated manufacturing. Tolerances held to ±0.01mm across 
+                        all mating surfaces.
+                    </p>
+                    <div class="project-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Points:</span>
+                            <span>7,999</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Material:</span>
+                            <span>17-4 PH SS</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Year:</span>
+                            <span>2023</span>
+                        </div>
+                    </div>
+                    <div class="project-actions">
+                        <a href="#" class="btn-small btn-outline">View Full Scan</a>
+                        <a href="#" class="btn-small btn-outline">Case Study</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Project 4 -->
+            <article class="project-card">
+                <div class="preview-container" id="preview-4">
+                    <div class="preview-loading">Loading point cloud...</div>
+                </div>
+                <div class="project-info">
+                    <span class="project-category">Computational Art</span>
+                    <h2 class="project-title">Particle Aggregation Study</h2>
+                    <p class="project-description">
+                        Generative sculpture exploring emergent forms through particle 
+                        aggregation simulation. Physical prototype produced via 
+                        selective laser sintering from generated point cloud data.
+                    </p>
+                    <div class="project-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Points:</span>
+                            <span>7,000</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Method:</span>
+                            <span>DLA Simulation</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Year:</span>
+                            <span>2023</span>
+                        </div>
+                    </div>
+                    <div class="project-actions">
+                        <a href="#" class="btn-small btn-outline">View Full Scan</a>
+                        <a href="#" class="btn-small btn-outline">Case Study</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <footer class="footer">
+            <span>EST. 2024 / C4 STUDIOS</span>
+            <span>Mechanical Engineering & Design</span>
+        </footer>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { PCDLoader } from 'three/addons/loaders/PCDLoader.js';
+
+        // Mini point cloud viewer factory
+        function createMiniViewer(containerId, pcdUrl) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            // Remove loading text
+            const loading = container.querySelector('.preview-loading');
+            if (loading) loading.remove();
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(width, height);
+            renderer.setClearColor(0x050805, 1);
+            container.appendChild(renderer.domElement);
+
+            const scene = new THREE.Scene();
+            
+            const camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 100);
+            camera.position.set(0, 0, 2.5);
+
+            // Subtle auto-rotation controls (no user interaction)
+            let rotationSpeed = 0.003;
+            let time = Math.random() * 100; // Random start phase
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x003311, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0x00ff6a, 1.0);
+            directionalLight.position.set(2, 2, 2);
+            scene.add(directionalLight);
+
+            // Load point cloud
+            const loader = new PCDLoader();
+            loader.load(
+                pcdUrl,
+                function (points) {
+                    points.geometry.center();
+                    
+                    points.geometry.computeBoundingSphere();
+                    const r = points.geometry.boundingSphere?.radius ?? 1.0;
+                    
+                    // Fit to view
+                    const distance = r * 2.2;
+                    camera.position.set(distance, distance * 0.3, distance);
+                    camera.lookAt(0, 0, 0);
+                    
+                    // Point styling
+                    points.material.size = Math.max(0.015, r / 80);
+                    
+                    // If the PCD has RGB colors, keep them; otherwise set green
+                    if (!points.geometry.attributes.color) {
+                        points.material.color.setHex(0x00ff6a);
+                        points.material.vertexColors = false;
+                    }
+                    
+                    scene.add(points);
+                },
+                undefined,
+                function (error) {
+                    console.warn(`Failed to load ${pcdUrl}:`, error);
+                }
+            );
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                time += rotationSpeed;
+                
+                // Gentle turntable rotation
+                scene.rotation.y = time;
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                const newWidth = container.clientWidth;
+                const newHeight = container.clientHeight;
+                camera.aspect = newWidth / newHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(newWidth, newHeight);
+            });
+        }
+
+        // Initialize all four mini viewers
+        document.addEventListener('DOMContentLoaded', () => {
+            createMiniViewer('preview-1', './previews/project1.pcd');
+            createMiniViewer('preview-2', './previews/project2.pcd');
+            createMiniViewer('preview-3', './previews/project3.pcd');
+            createMiniViewer('preview-4', './previews/project4.pcd');
+        });
+    </script>
+</body>
+</html>
