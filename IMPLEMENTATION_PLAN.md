@@ -527,3 +527,29 @@ cursorOutline.style.background = 'rgba(0, 255, 106, 0.05)';
 - [ ] Three.js scenes have dark background and green particles
 - [ ] All borders use green accent colors
 - [ ] Text is readable with good contrast
+
+
+## 2026-02-19 Update — C4 Light Teal Palette Rollout
+
+Applied the palette defined in `colorPalleteC4.html` across working pages:
+
+- `index.html`
+- `projects.html` (Selected Work)
+- `c4-curated-archive.html`
+- `c4-capabilities.html`
+- `c4-about.html`
+- `c4-loading.html`
+
+### Canonical Color Tokens
+- `--c-bg-base: #f0f7f9`
+- `--c-bg-overlay: rgba(0, 128, 128, 0.05)`
+- `--c-text-main: #0a192f`
+- `--c-text-muted: #4a6fa5`
+- `--c-accent: #008080`
+- `--c-secondary-accent: #00a8a8`
+- `--c-golden: #00ced1`
+
+### Additional Normalization
+- Updated hardcoded green glow/border values to teal/cyan equivalents.
+- Updated Three.js accent/light colors to align with the new palette where used.
+- Kept navigation structure synchronized (Selected Work + Curated Archive + Capabilities + About).

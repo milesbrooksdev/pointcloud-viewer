@@ -19,13 +19,13 @@
 
     <style>
         :root {
-            --c-bg-base: #0a0f0a;
-            --c-bg-overlay: rgba(0, 255, 100, 0.03);
-            --c-text-main: #b8ffcc;
-            --c-text-muted: #5a8f6a;
-            --c-accent: #00ff6a;
-            --c-secondary-accent: #39ff85;
-            --c-golden: #00c94a;
+            --c-bg-base: #f0f7f9;
+            --c-bg-overlay: rgba(0, 128, 128, 0.05);
+            --c-text-main: #0a192f;
+            --c-text-muted: #4a6fa5;
+            --c-accent: #008080;
+            --c-secondary-accent: #00a8a8;
+            --c-golden: #00ced1;
 
             --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
 
@@ -73,7 +73,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            border-bottom: 1px solid rgba(0, 255, 106, 0.15);
+            border-bottom: 1px solid rgba(10, 25, 47, 0.10);
             padding-bottom: 1.5rem;
             margin-bottom: 3rem;
         }
@@ -92,7 +92,7 @@
         .nav-text:hover,
         .nav-text.active {
             color: var(--c-accent);
-            text-shadow: 0 0 8px rgba(0, 255, 106, 0.5);
+            text-shadow: 0 0 8px rgba(0, 128, 128, 0.4);
         }
 
         .brand {
@@ -141,14 +141,14 @@
             gap: 2rem;
             padding: 1.5rem;
             background: rgba(0, 255, 100, 0.02);
-            border: 1px solid rgba(0, 255, 106, 0.1);
+            border: 1px solid rgba(0, 128, 128, 0.12);
             border-radius: 8px;
             transition: all 0.4s var(--ease-fluid);
         }
 
         .project-card:hover {
             background: rgba(0, 255, 100, 0.04);
-            border-color: rgba(0, 255, 106, 0.25);
+            border-color: rgba(10, 25, 47, 0.18);
             transform: translateY(-2px);
         }
 
@@ -156,7 +156,7 @@
         .preview-container {
             width: 280px;
             height: 200px;
-            background: #050805;
+            background: #eaf4f6;
             border-radius: 4px;
             overflow: hidden;
             position: relative;
@@ -241,13 +241,13 @@
 
         .btn-outline {
             background: transparent;
-            border: 1px solid rgba(0, 255, 106, 0.25);
+            border: 1px solid rgba(10, 25, 47, 0.18);
             color: var(--c-text-main);
         }
 
         .btn-outline:hover {
             border-color: var(--c-accent);
-            background: rgba(0, 255, 106, 0.06);
+            background: rgba(0, 128, 128, 0.08);
         }
 
         /* Loading state */
@@ -266,7 +266,7 @@
         .footer {
             margin-top: 6rem;
             padding-top: 2rem;
-            border-top: 1px solid rgba(0, 255, 106, 0.1);
+            border-top: 1px solid rgba(0, 128, 128, 0.12);
             display: flex;
             justify-content: space-between;
             font-family: var(--font-mono);
@@ -293,13 +293,13 @@
             left: 0;
             width: 40px;
             height: 40px;
-            border: 1px solid rgba(0, 255, 106, 0.4);
+            border: 1px solid rgba(0, 128, 128, 0.4);
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
             transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s, border-color 0.2s;
-            mix-blend-mode: screen;
+            mix-blend-mode: darken;
         }
 
         @media (max-width: 900px) {
@@ -511,7 +511,7 @@
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.setSize(width, height);
-            renderer.setClearColor(0x050805, 1);
+            renderer.setClearColor(0xeaf4f6, 1);
             container.appendChild(renderer.domElement);
 
             const scene = new THREE.Scene();
@@ -524,10 +524,10 @@
             let time = Math.random() * 100; // Random start phase
 
             // Lighting
-            const ambientLight = new THREE.AmbientLight(0x003311, 0.6);
+            const ambientLight = new THREE.AmbientLight(0xe0f2f1, 0.6);
             scene.add(ambientLight);
 
-            const directionalLight = new THREE.DirectionalLight(0x00ff6a, 1.0);
+            const directionalLight = new THREE.DirectionalLight(0x008080, 1.0);
             directionalLight.position.set(2, 2, 2);
             scene.add(directionalLight);
 
@@ -551,7 +551,7 @@
                     
                     // If the PCD has RGB colors, keep them; otherwise set green
                     if (!points.geometry.attributes.color) {
-                        points.material.color.setHex(0x00ff6a);
+                        points.material.color.setHex(0x008080);
                         points.material.vertexColors = false;
                     }
                     
@@ -624,12 +624,12 @@
             el.addEventListener('mouseenter', () => {
                 cursorOutline.style.width = '60px';
                 cursorOutline.style.height = '60px';
-                cursorOutline.style.borderColor = '#00ff6a';
+                cursorOutline.style.borderColor = '#008080';
             });
             el.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
-                cursorOutline.style.borderColor = 'rgba(0, 255, 106, 0.4)';
+                cursorOutline.style.borderColor = 'rgba(0, 128, 128, 0.4)';
             });
         });
     </script>

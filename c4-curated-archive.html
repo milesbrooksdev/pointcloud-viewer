@@ -9,16 +9,16 @@
 
     <style vid="8">
         :root {
-            --c-bg-base: #0a0f0a;
-            --c-bg-overlay: rgba(0, 255, 100, 0.03);
-            --c-text-main: #b8ffcc;
-            --c-text-muted: #5a8f6a;
-            --c-accent: #00ff6a;
-            --c-secondary-accent: #39ff85;
-            --c-golden: #00c94a;
-            
+            --c-bg-base: #f0f7f9;
+            --c-bg-overlay: rgba(0, 128, 128, 0.05);
+            --c-text-main: #0a192f;
+            --c-text-muted: #4a6fa5;
+            --c-accent: #008080;
+            --c-secondary-accent: #00a8a8;
+            --c-golden: #00ced1;
+
             --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
-            
+
             --font-serif: 'Playfair Display', serif;
             --font-mono: 'Space Mono', monospace;
             --font-script: 'Italianno', cursive;
@@ -75,7 +75,7 @@
 
         .nav-text:hover, .nav-text.active {
             color: var(--c-accent);
-            text-shadow: 0 0 8px rgba(0, 255, 106, 0.5);
+            text-shadow: 0 0 8px rgba(0, 128, 128, 0.4);
         }
 
         .header-top {
@@ -83,7 +83,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            border-bottom: 1px solid rgba(0, 255, 106, 0.15);
+            border-bottom: 1px solid rgba(10, 25, 47, 0.10);
             padding-bottom: 1.5rem;
         }
 
@@ -177,7 +177,7 @@
             overflow: hidden;
             position: relative;
             margin-bottom: 1.5rem;
-            background-color: rgba(0, 255, 106, 0.1);
+            background-color: rgba(0, 128, 128, 0.12);
         }
 
         .project-image {
@@ -261,13 +261,13 @@
         .cursor-outline {
             position: fixed;
             top: 0; left: 0; width: 40px; height: 40px;
-            border: 1px solid rgba(0, 255, 106, 0.4);
+            border: 1px solid rgba(0, 128, 128, 0.4);
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
             transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s, border-color 0.2s;
-            mix-blend-mode: screen;
+            mix-blend-mode: darken;
         }
 
         @keyframes fadeInSlow {
@@ -277,7 +277,7 @@
 
         footer {
             margin-top: 10rem;
-            border-top: 1px solid rgba(0, 255, 106, 0.1);
+            border-top: 1px solid rgba(0, 128, 128, 0.12);
             padding: 4rem 0;
             display: flex;
             justify-content: space-between;
@@ -434,12 +434,12 @@
             el.addEventListener('mouseenter', () => {
                 cursorOutline.style.width = '60px';
                 cursorOutline.style.height = '60px';
-                cursorOutline.style.borderColor = '#00ff6a';
+                cursorOutline.style.borderColor = '#008080';
                             });
             el.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
-                cursorOutline.style.borderColor = 'rgba(0, 255, 106, 0.4)';
+                cursorOutline.style.borderColor = 'rgba(0, 128, 128, 0.4)';
                             });
         });
 

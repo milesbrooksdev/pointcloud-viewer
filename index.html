@@ -17,13 +17,13 @@
 
     <style>
         :root {
-            --c-bg-base: #0a0f0a;
-            --c-bg-overlay: rgba(0, 255, 100, 0.03);
-            --c-text-main: #b8ffcc;
-            --c-text-muted: #5a8f6a;
-            --c-accent: #00ff6a;
-            --c-secondary-accent: #39ff85;
-            --c-golden: #00c94a;
+            --c-bg-base: #f0f7f9;
+            --c-bg-overlay: rgba(0, 128, 128, 0.05);
+            --c-text-main: #0a192f;
+            --c-text-muted: #4a6fa5;
+            --c-accent: #008080;
+            --c-secondary-accent: #00a8a8;
+            --c-golden: #00ced1;
 
             --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
 
@@ -125,7 +125,7 @@
 
         .nav-text:hover {
             color: var(--c-accent);
-            text-shadow: 0 0 8px rgba(0, 255, 106, 0.5);
+            text-shadow: 0 0 8px rgba(0, 128, 128, 0.4);
         }
 
         .header-top {
@@ -133,7 +133,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            border-bottom: 1px solid rgba(0, 255, 106, 0.15);
+            border-bottom: 1px solid rgba(10, 25, 47, 0.10);
             padding-bottom: 1.5rem;
         }
 
@@ -179,7 +179,7 @@
             color: var(--c-accent);
             opacity: 0;
             animation: fadeInSlow 3s var(--ease-fluid) forwards 1.2s;
-            text-shadow: 0 0 12px rgba(0, 255, 106, 0.4);
+            text-shadow: 0 0 12px rgba(0, 128, 128, 0.4);
             margin-bottom: 3rem;
         }
 
@@ -208,33 +208,33 @@
 
         .btn-primary {
             background: var(--c-accent);
-            color: #0a0f0a;
+            color: white;
             font-weight: 700;
         }
 
         .btn-primary:hover {
             background: var(--c-secondary-accent);
-            box-shadow: 0 0 30px rgba(0, 255, 106, 0.5);
+            box-shadow: 0 0 30px rgba(0, 128, 128, 0.4);
             animation: pulse-glow 2s infinite;
             transform: translateY(-2px);
         }
 
         .btn-secondary {
             background: transparent;
-            border: 1px solid rgba(0, 255, 106, 0.25);
+            border: 1px solid rgba(10, 25, 47, 0.18);
             color: var(--c-text-main);
         }
 
         .btn-secondary:hover {
             border-color: var(--c-accent);
-            background: rgba(0, 255, 106, 0.06);
+            background: rgba(0, 128, 128, 0.08);
             transform: translateY(-2px);
         }
 
         @keyframes pulse-glow {
-            0% { box-shadow: 0 0 20px rgba(0, 255, 106, 0.4); }
-            50% { box-shadow: 0 0 40px rgba(57, 255, 133, 0.6); }
-            100% { box-shadow: 0 0 20px rgba(0, 255, 106, 0.4); }
+            0% { box-shadow: 0 0 20px rgba(0, 128, 128, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(0, 206, 209, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(0, 128, 128, 0.4); }
         }
 
         .scroll-indicator {
@@ -312,13 +312,13 @@
         .cursor-outline {
             position: fixed;
             top: 0; left: 0; width: 40px; height: 40px;
-            border: 1px solid rgba(0, 255, 106, 0.4);
+            border: 1px solid rgba(0, 128, 128, 0.4);
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
             transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s, border-color 0.2s;
-            mix-blend-mode: screen;
+            mix-blend-mode: darken;
         }
 
 
@@ -425,7 +425,7 @@
                 camera.far  = Math.max(50, r * 20);
                 camera.updateProjectionMatrix();
                 points.material.size = Math.max(0.0015, r / 300);
-                points.material.color.setHex(0x00ff6a);
+                points.material.color.setHex(0x008080);
                 scene.add(points);
                 render();
             },
@@ -451,7 +451,7 @@
                 positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
                 positions[i3 + 2] = radius * Math.cos(phi);
 
-                const color = new THREE.Color(0x00ff6a);
+                const color = new THREE.Color(0x008080);
                 colors[i3] = color.r;
                 colors[i3 + 1] = color.g;
                 colors[i3 + 2] = color.b;
@@ -473,10 +473,10 @@
             window.fallbackPoints = points;
         }
 
-        const ambientLight = new THREE.AmbientLight(0x003311, 0.8);
+        const ambientLight = new THREE.AmbientLight(0xe0f2f1, 0.8);
         scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0x00ff6a, 1.5);
+        const directionalLight = new THREE.DirectionalLight(0x008080, 1.5);
         directionalLight.position.set(5, 5, 5);
         scene.add(directionalLight);
 
@@ -540,12 +540,12 @@
             el.addEventListener('mouseenter', () => {
                 cursorOutline.style.width = '60px';
                 cursorOutline.style.height = '60px';
-                cursorOutline.style.borderColor = '#00ff6a';
+                cursorOutline.style.borderColor = '#008080';
                             });
             el.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
-                cursorOutline.style.borderColor = 'rgba(0, 255, 106, 0.4)';
+                cursorOutline.style.borderColor = 'rgba(0, 128, 128, 0.4)';
                             });
         });
     </script>
