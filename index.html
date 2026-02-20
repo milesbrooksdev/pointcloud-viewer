@@ -24,6 +24,7 @@
             --c-accent: #008080;
             --c-secondary-accent: #00a8a8;
             --c-golden: #00ced1;
+            --c-grid-line: rgba(10, 25, 47, 0.12);
 
             --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
 
@@ -50,8 +51,28 @@
             position: relative;
         }
 
+        .page-stack {
+            position: relative;
+            width: 100%;
+            height: 200vh;
+            transform: translateY(0);
+            transition: transform 700ms var(--ease-fluid);
+        }
+
+        .page-stack.show-easter-egg {
+            transform: translateY(-100vh);
+        }
+
+        .view {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* -------- Main view (existing pointcloud hero) -------- */
         #three-container {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -245,9 +266,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            opacity: 0.5;
+            opacity: 0.55;
             animation: bounce 2s infinite;
+            pointer-events: auto;
+            background: transparent;
+            border: 0;
         }
+
+        .scroll-indicator:hover { opacity: 1; }
 
         .chevron {
             width: 15px;
@@ -257,23 +283,12 @@
             transform: rotate(45deg);
         }
 
+        .chevron-up { transform: rotate(-135deg); }
+
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
             40% { transform: translate(-50%, -10px); }
             60% { transform: translate(-50%, -5px); }
-        }
-
-        .interaction-anchor {
-            position: absolute;
-            bottom: 4rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            pointer-events: auto;
-            visibility: hidden;
         }
 
         .coords {
@@ -300,6 +315,108 @@
             opacity: 0.6;
         }
 
+        /* -------- Easter egg Conway view -------- */
+        .conway-view {
+            background: radial-gradient(circle at 50% 35%, rgba(0,168,168,0.09), transparent 60%), var(--c-bg-base);
+        }
+
+        .conway-grid-layer {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, var(--c-grid-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--c-grid-line) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #conwayCanvas {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: auto;
+            image-rendering: pixelated;
+        }
+
+        .conway-panel {
+            position: absolute;
+            right: 3rem;
+            top: 3rem;
+            z-index: 5;
+            background: rgba(240, 247, 249, 0.92);
+            border: 1px solid rgba(10, 25, 47, 0.16);
+            backdrop-filter: blur(8px);
+            min-width: 220px;
+        }
+
+        .conway-panel button,
+        .conway-panel .counter {
+            width: 100%;
+            border: 0;
+            border-bottom: 1px solid rgba(10, 25, 47, 0.1);
+            background: transparent;
+            padding: 0.75rem 0.9rem;
+            text-align: left;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--c-text-main);
+        }
+
+        .conway-panel button:hover {
+            background: rgba(0, 128, 128, 0.08);
+        }
+
+        .conway-panel #golRunBtn {
+            background: rgba(0, 128, 128, 0.14);
+            font-weight: 700;
+            color: var(--c-accent);
+        }
+
+        .conway-panel .counter {
+            border-bottom: 0;
+            color: var(--c-text-muted);
+        }
+
+        .conway-title {
+            position: absolute;
+            left: 3rem;
+            top: 3rem;
+            z-index: 5;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--c-text-muted);
+            font-size: 0.7rem;
+        }
+
+        .scroll-up-wrap {
+            position: absolute;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6;
+            animation: bounceUp 2s infinite;
+        }
+
+        .scroll-up-wrap .scroll-indicator {
+            position: relative;
+            top: auto;
+            left: auto;
+            bottom: auto;
+            transform: none;
+            animation: none;
+        }
+
+        @keyframes bounceUp {
+            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+            40% { transform: translate(-50%, 10px); }
+            60% { transform: translate(-50%, 5px); }
+        }
+
         .cursor-dot {
             position: fixed;
             top: 0; left: 0; width: 4px; height: 4px;
@@ -321,7 +438,6 @@
             mix-blend-mode: darken;
         }
 
-
         @keyframes fadeInSlow {
             from { opacity: 0; filter: blur(10px); }
             to { opacity: 1; filter: blur(0); }
@@ -332,52 +448,70 @@
             .ui-layer { padding: 2rem; }
             .coords { display: none; }
             .cta-container { flex-direction: column; width: 100%; padding: 0 2rem; }
+            .conway-panel { right: 1rem; top: 1rem; min-width: 190px; }
+            .conway-title { left: 1rem; top: 1rem; }
         }
-
     </style>
 </head>
 <body>
 
-    <div id="three-container"></div>
-    <div class="layer-sharp"></div>
-    <div class="layer-blur"></div>
-    <div class="noise-overlay"></div>
+    <div class="page-stack" id="pageStack">
+        <section class="view main-view">
+            <div id="three-container"></div>
+            <div class="layer-sharp"></div>
+            <div class="layer-blur"></div>
+            <div class="noise-overlay"></div>
 
-    <div class="ui-layer">
+            <div class="ui-layer">
+                <header class="header-top">
+                    <a href="index.html" class="nav-text brand">C4 Studios</a>
+                    <div style="display: flex; gap: 3rem;">
+                        <a href="projects.html" class="nav-text">Selected Work</a>
+                        <a href="c4-curated-archive.html" class="nav-text">Curated Archive</a>
+                        <a href="c4-capabilities.html" class="nav-text">Capabilities</a>
+                        <a href="c4-about.html" class="nav-text">About</a>
+                    </div>
+                </header>
 
-        <header class="header-top">
-            <a href="index.html" class="nav-text brand">C4 Studios</a>
-            <div style="display: flex; gap: 3rem;">
-                <a href="projects.html" class="nav-text">Selected Work</a>
-                <a href="c4-curated-archive.html" class="nav-text">Curated Archive</a>
-                <a href="c4-capabilities.html" class="nav-text">Capabilities</a>
-                <a href="c4-about.html" class="nav-text">About</a>
+                <main class="hero-text">
+                    <h1 class="prompt-main">Mechanical<br>Engineering</h1>
+                    <p class="prompt-sub">Precision engineered for the world of tomorrow</p>
+
+                    <div class="cta-container">
+                        <a href="#" class="btn btn-primary">Reach Out</a>
+                        <a href="c4-curated-archive.html" class="btn btn-secondary">View Projects</a>
+                    </div>
+                </main>
+
+                <div class="coords">EST. 2024 / C4 STUDIOS</div>
+
+                <button class="scroll-indicator" id="revealEggBtn" aria-label="Reveal Conway easter egg">
+                    <div class="chevron"></div>
+                </button>
             </div>
-        </header>
+        </section>
 
-        <main class="hero-text">
-            <h1 class="prompt-main">Mechanical<br>Engineering</h1>
-            <p class="prompt-sub">Precision engineered for the world of tomorrow</p>
+        <section class="view conway-view" id="conwayView">
+            <div class="conway-grid-layer"></div>
+            <canvas id="conwayCanvas"></canvas>
+            <div class="noise-overlay" style="z-index:4;"></div>
 
-            <div class="cta-container">
-                <a href="#" class="btn btn-primary">Reach Out</a>
-                <a href="c4-curated-archive.html" class="btn btn-secondary">View Projects</a>
+            <div class="scroll-up-wrap">
+                <button class="scroll-indicator" id="hideEggBtn" aria-label="Return to main view">
+                    <div class="chevron chevron-up"></div>
+                </button>
             </div>
-        </main>
 
-        <div class="coords">
-            EST. 2024 / C4 STUDIOS
-        </div>
+            <div class="conway-title">Conway's Game of Life // Hidden Studio Layer</div>
 
-        <div class="scroll-indicator">
-            <div class="chevron"></div>
-        </div>
-
-        <div class="interaction-anchor">
-            <button class="orb-btn" aria-label="Enter Studio"></button>
-            <span class="label-enter">Initiate Motion</span>
-        </div>
-
+            <div class="conway-panel">
+                <button id="golRunBtn">▶ Run [GOL]</button>
+                <button id="golStepBtn">→ Step</button>
+                <button id="golClearBtn">✕ Clear</button>
+                <button id="golReseedBtn">↺ Reseed</button>
+                <div class="counter" id="golCounter">GEN: 0 | CELLS: 0</div>
+            </div>
+        </section>
     </div>
 
     <div class="cursor-dot"></div>
@@ -389,7 +523,6 @@
         import { PCDLoader } from 'three/addons/loaders/PCDLoader.js';
 
         const threeContainer = document.getElementById('three-container');
-
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -415,7 +548,6 @@
             './model.pcd',
             function (points) {
                 points.geometry.center();
-
                 points.geometry.computeBoundingSphere();
                 const r = points.geometry.boundingSphere?.radius ?? 1.0;
                 controls.target.set(0, 0, 0);
@@ -427,13 +559,9 @@
                 points.material.size = Math.max(0.0015, r / 300);
                 points.material.color.setHex(0x008080);
                 scene.add(points);
-                render();
             },
             undefined,
-            function (error) {
-                console.warn('PCD loading failed, using fallback geometry');
-                createFallbackGeometry();
-            }
+            function () { createFallbackGeometry(); }
         );
 
         function createFallbackGeometry() {
@@ -461,13 +589,7 @@
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-            const material = new THREE.PointsMaterial({
-                size: 0.003,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.8
-            });
-
+            const material = new THREE.PointsMaterial({ size: 0.003, vertexColors: true, transparent: true, opacity: 0.8 });
             const points = new THREE.Points(geometry, material);
             scene.add(points);
             window.fallbackPoints = points;
@@ -480,27 +602,150 @@
         directionalLight.position.set(5, 5, 5);
         scene.add(directionalLight);
 
-        window.addEventListener('resize', onWindowResize);
-
-        function onWindowResize() {
+        window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            render();
-        }
+            initConwaySize();
+        });
 
         function render() {
             requestAnimationFrame(render);
             controls.update();
-
-            if (window.fallbackPoints) {
-                window.fallbackPoints.rotation.y += 0.001;
-            }
-
+            if (window.fallbackPoints) window.fallbackPoints.rotation.y += 0.001;
             renderer.render(scene, camera);
         }
-
         render();
+
+        /* --- Swipe easter egg controls --- */
+        const pageStack = document.getElementById('pageStack');
+        document.getElementById('revealEggBtn').addEventListener('click', () => {
+            pageStack.classList.add('show-easter-egg');
+        });
+        document.getElementById('hideEggBtn').addEventListener('click', () => {
+            pageStack.classList.remove('show-easter-egg');
+        });
+
+        /* --- Conway implementation themed for C4 palette --- */
+        const canvas = document.getElementById('conwayCanvas');
+        const ctx = canvas.getContext('2d');
+        const CELL = 20;
+        const GOL_INTERVAL = 120;
+        const cells = new Set();
+
+        const runBtn = document.getElementById('golRunBtn');
+        const stepBtn = document.getElementById('golStepBtn');
+        const clearBtn = document.getElementById('golClearBtn');
+        const reseedBtn = document.getElementById('golReseedBtn');
+        const counter = document.getElementById('golCounter');
+
+        let generation = 0;
+        let running = false;
+        let intervalId = null;
+
+        function cellKey(x, y) { return `${x},${y}`; }
+        function parseKey(key) { const [x, y] = key.split(','); return [+x, +y]; }
+
+        function initConwaySize() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = Math.round(rect.width);
+            canvas.height = Math.round(rect.height);
+            renderConway();
+        }
+
+        function renderConway() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#008080';
+            for (const key of cells) {
+                const [x, y] = parseKey(key);
+                ctx.fillRect(x * CELL + 1, y * CELL + 1, CELL - 1, CELL - 1);
+            }
+        }
+
+        function updateCounter() {
+            counter.textContent = `GEN: ${generation} | CELLS: ${cells.size}`;
+        }
+
+        function stepConway() {
+            const neighborCount = new Map();
+            for (const key of cells) {
+                const [x, y] = parseKey(key);
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        if (dx === 0 && dy === 0) continue;
+                        const nk = cellKey(x + dx, y + dy);
+                        neighborCount.set(nk, (neighborCount.get(nk) || 0) + 1);
+                    }
+                }
+            }
+
+            const next = new Set();
+            for (const [key, count] of neighborCount) {
+                if (count === 3 || (count === 2 && cells.has(key))) next.add(key);
+            }
+
+            cells.clear();
+            for (const k of next) cells.add(k);
+            generation++;
+            updateCounter();
+            renderConway();
+        }
+
+        function stopConway() {
+            if (!running) return;
+            running = false;
+            clearInterval(intervalId);
+            intervalId = null;
+            runBtn.textContent = '▶ Run [GOL]';
+        }
+
+        function startConway() {
+            if (running) return;
+            running = true;
+            intervalId = setInterval(stepConway, GOL_INTERVAL);
+            runBtn.textContent = '■ Pause [GOL]';
+        }
+
+        function seedConway() {
+            cells.clear();
+            const cols = Math.floor(canvas.width / CELL);
+            const rows = Math.floor(canvas.height / CELL);
+            for (let s = 0; s < 14; s++) {
+                let sx = Math.floor(Math.random() * cols);
+                let sy = Math.floor(Math.random() * rows);
+                const len = 10 + Math.floor(Math.random() * 24);
+                const dx = Math.random() > 0.5 ? 1 : -1;
+                const dy = Math.random() > 0.6 ? 1 : 0;
+                for (let i = 0; i < len; i++) {
+                    const cx = sx + i * dx;
+                    const cy = sy + i * dy;
+                    if (cx >= 0 && cy >= 0 && cx < cols && cy < rows && Math.random() > 0.25) {
+                        cells.add(cellKey(cx, cy));
+                    }
+                }
+            }
+            generation = 0;
+            updateCounter();
+            renderConway();
+        }
+
+        runBtn.addEventListener('click', () => running ? stopConway() : startConway());
+        stepBtn.addEventListener('click', () => { stopConway(); stepConway(); });
+        clearBtn.addEventListener('click', () => { stopConway(); cells.clear(); generation = 0; updateCounter(); renderConway(); });
+        reseedBtn.addEventListener('click', () => { stopConway(); seedConway(); });
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const gx = Math.floor((e.clientX - rect.left) / CELL);
+            const gy = Math.floor((e.clientY - rect.top) / CELL);
+            const key = cellKey(gx, gy);
+            if (cells.has(key)) cells.delete(key); else cells.add(key);
+            updateCounter();
+            renderConway();
+        });
+
+        initConwaySize();
+        seedConway();
     </script>
 
     <script>
@@ -536,17 +781,17 @@
         }
         animateCursor();
 
-        document.querySelectorAll('.btn, .nav-text, .brand').forEach(el => {
+        document.querySelectorAll('.btn, .nav-text, .brand, .scroll-indicator, .conway-panel button').forEach(el => {
             el.addEventListener('mouseenter', () => {
                 cursorOutline.style.width = '60px';
                 cursorOutline.style.height = '60px';
                 cursorOutline.style.borderColor = '#008080';
-                            });
+            });
             el.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
                 cursorOutline.style.borderColor = 'rgba(0, 128, 128, 0.4)';
-                            });
+            });
         });
     </script>
 </body></html>
