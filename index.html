@@ -509,6 +509,7 @@
                 <button id="golStepBtn">→ Step</button>
                 <button id="golClearBtn">✕ Clear</button>
                 <button id="golReseedBtn">↺ Reseed</button>
+                <button id="golStoryBtn">✦ Story</button>
                 <div class="counter" id="golCounter">GEN: 0 | CELLS: 0</div>
             </div>
         </section>
@@ -637,6 +638,7 @@
         const stepBtn = document.getElementById('golStepBtn');
         const clearBtn = document.getElementById('golClearBtn');
         const reseedBtn = document.getElementById('golReseedBtn');
+        const storyBtn = document.getElementById('golStoryBtn');
         const counter = document.getElementById('golCounter');
 
         let generation = 0;
@@ -645,6 +647,120 @@
 
         function cellKey(x, y) { return `${x},${y}`; }
         function parseKey(key) { const [x, y] = key.split(','); return [+x, +y]; }
+
+        const FONT_5x7 = {
+            'A':['01110','10001','10001','11111','10001','10001','10001'],
+            'B':['11110','10001','10001','11110','10001','10001','11110'],
+            'C':['01110','10001','10000','10000','10000','10001','01110'],
+            'D':['11110','10001','10001','10001','10001','10001','11110'],
+            'E':['11111','10000','10000','11110','10000','10000','11111'],
+            'F':['11111','10000','10000','11110','10000','10000','10000'],
+            'G':['01110','10001','10000','10111','10001','10001','01111'],
+            'H':['10001','10001','10001','11111','10001','10001','10001'],
+            'I':['11111','00100','00100','00100','00100','00100','11111'],
+            'L':['10000','10000','10000','10000','10000','10000','11111'],
+            'M':['10001','11011','10101','10101','10001','10001','10001'],
+            'N':['10001','11001','10101','10011','10001','10001','10001'],
+            'O':['01110','10001','10001','10001','10001','10001','01110'],
+            'P':['11110','10001','10001','11110','10000','10000','10000'],
+            'R':['11110','10001','10001','11110','10100','10010','10001'],
+            'S':['01111','10000','10000','01110','00001','00001','11110'],
+            'T':['11111','00100','00100','00100','00100','00100','00100'],
+            'U':['10001','10001','10001','10001','10001','10001','01110'],
+            'V':['10001','10001','10001','10001','10001','01010','00100'],
+            'W':['10001','10001','10001','10101','10101','11011','10001'],
+            'Y':['10001','10001','01010','00100','00100','00100','00100'],
+            '-':['00000','00000','00000','11111','00000','00000','00000'],
+            "'":['00100','00100','00100','00000','00000','00000','00000'],
+            ' ':['00000','00000','00000','00000','00000','00000','00000']
+        };
+
+        let storyStage = 0;
+        let storyTimer = null;
+
+        function resetStoryButton() {
+            storyStage = 0;
+            storyBtn.textContent = '✦ Story';
+        }
+
+        function textToCellList(text, startCol, startRow, maxCols) {
+            const words = text.toUpperCase().split(/\s+/);
+            const lines = [];
+            let line = '';
+            const approxCharCols = 6;
+            const maxChars = Math.max(8, Math.floor(maxCols / approxCharCols));
+
+            for (const w of words) {
+                const candidate = line ? `${line} ${w}` : w;
+                if (candidate.length <= maxChars) line = candidate;
+                else {
+                    if (line) lines.push(line);
+                    line = w;
+                }
+            }
+            if (line) lines.push(line);
+
+            const list = [];
+            lines.forEach((ln, lineIdx) => {
+                let xOffset = 0;
+                for (const chRaw of ln) {
+                    const ch = FONT_5x7[chRaw] ? chRaw : ' ';
+                    const glyph = FONT_5x7[ch];
+                    for (let gy = 0; gy < glyph.length; gy++) {
+                        const row = glyph[gy];
+                        for (let gx = 0; gx < row.length; gx++) {
+                            if (row[gx] === '1') {
+                                list.push({ x: startCol + xOffset + gx, y: startRow + lineIdx * 9 + gy });
+                            }
+                        }
+                    }
+                    xOffset += 6;
+                }
+            });
+
+            list.sort((a, b) => (a.y - b.y) || (a.x - b.x));
+            return list;
+        }
+
+        function animateStoryCells(cellList) {
+            if (storyTimer) {
+                clearTimeout(storyTimer);
+                storyTimer = null;
+            }
+
+            let i = 0;
+            const drawNext = () => {
+                const burst = 10;
+                for (let n = 0; n < burst && i < cellList.length; n++, i++) {
+                    const { x, y } = cellList[i];
+                    cells.add(cellKey(x, y));
+                }
+                updateCounter();
+                renderConway();
+                if (i < cellList.length) storyTimer = setTimeout(drawNext, 18);
+            };
+            drawNext();
+        }
+
+        function runStoryStage() {
+            const cols = Math.max(1, Math.floor(canvas.width / CELL));
+            if (storyStage === 0) {
+                const msg = "Cellular Automata and Conways game of life - Chet finds it fascinating and here's why you should too";
+                const cellsForText = textToCellList(msg, 3, 4, cols - 6);
+                animateStoryCells(cellsForText);
+                storyStage = 1;
+                storyBtn.textContent = '✦ Continue Story';
+                return;
+            }
+
+            if (storyStage === 1) {
+                const msg = 'Conways game of life is based on four simple rules';
+                const cellsForText = textToCellList(msg, 3, 24, cols - 6);
+                animateStoryCells(cellsForText);
+                storyStage = 2;
+                storyBtn.textContent = '✦ Continue Story';
+            }
+        }
 
         function initConwaySize() {
             // Use viewport dimensions directly so seeding spans the full visible Conway section.
@@ -735,8 +851,22 @@
 
         runBtn.addEventListener('click', () => running ? stopConway() : startConway());
         stepBtn.addEventListener('click', () => { stopConway(); stepConway(); });
-        clearBtn.addEventListener('click', () => { stopConway(); cells.clear(); generation = 0; updateCounter(); renderConway(); });
-        reseedBtn.addEventListener('click', () => { stopConway(); seedConway(); });
+        clearBtn.addEventListener('click', () => {
+            stopConway();
+            cells.clear();
+            generation = 0;
+            resetStoryButton();
+            updateCounter();
+            renderConway();
+        });
+        reseedBtn.addEventListener('click', () => {
+            stopConway();
+            seedConway();
+            resetStoryButton();
+        });
+        storyBtn.addEventListener('click', () => {
+            runStoryStage();
+        });
 
         function getGridCellFromPointer(e) {
             const rect = canvas.getBoundingClientRect();
@@ -783,6 +913,7 @@
         });
 
         initConwaySize();
+        resetStoryButton();
         seedConway();
     </script>
 
