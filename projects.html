@@ -63,54 +63,46 @@
         .container {
             position: relative;
             z-index: 10;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 5rem;
+            width: 100%;
+            padding: 4rem 5rem;
         }
 
         /* Header */
-        .header {
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 2rem;
+            width: 100%;
             border-bottom: 1px solid rgba(0, 255, 106, 0.15);
+            padding-bottom: 1.5rem;
             margin-bottom: 3rem;
         }
 
-        .brand {
-            font-family: var(--font-serif);
-            font-size: 1.8rem;
-            font-weight: 400;
-            letter-spacing: -0.02em;
-            text-transform: uppercase;
-            font-style: italic;
-            color: var(--c-text-main);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .brand:hover {
-            color: var(--c-accent);
-        }
-
-        .nav {
-            display: flex;
-            gap: 3rem;
-        }
-
-        .nav-link {
+        .nav-text {
             font-family: var(--font-mono);
             font-size: 0.7rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
+            font-weight: 400;
             color: var(--c-text-muted);
             text-decoration: none;
             transition: color 0.3s ease;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-text:hover,
+        .nav-text.active {
             color: var(--c-accent);
+            text-shadow: 0 0 8px rgba(0, 255, 106, 0.5);
+        }
+
+        .brand {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-style: italic;
+            color: var(--c-text-main);
         }
 
         /* Page Title */
@@ -334,12 +326,13 @@
     <div class="noise-overlay"></div>
     
     <div class="container">
-        <header class="header">
-            <a href="index.html" class="brand">C4 Studios</a>
-            <nav class="nav">
-                <a href="projects.html" class="nav-link active">Projects</a>
-                <a href="index.html" class="nav-link">Capabilities</a>
-            </nav>
+        <header class="header-top">
+            <a href="index.html" class="nav-text brand">C4 Studios</a>
+            <div style="display: flex; gap: 3rem;">
+                <a href="projects.html" class="nav-text active">Projects</a>
+                <a href="LumoCapabilitites.html" class="nav-text">Capabilities</a>
+                <a href="LumoNaritave.html" class="nav-text">About</a>
+            </div>
         </header>
 
         <h1 class="page-title">Selected Work</h1>

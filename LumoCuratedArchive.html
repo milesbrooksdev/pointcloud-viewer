@@ -1,7 +1,7 @@
 <html vid="0"><head vid="1">
     <meta charset="UTF-8" vid="2">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
-    <title vid="4">Projects | LUMO studios</title>
+    <title vid="4">Projects | C4 Studios</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com" vid="5">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" vid="6">
@@ -56,8 +56,7 @@
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            width: 100%;
             padding: 4rem 5rem;
             position: relative;
             z-index: 10;
@@ -268,12 +267,6 @@
             transition: width 0.2s, height 0.2s, background-color 0.2s;
             mix-blend-mode: screen;
         }
-        
-        .cursor-outline::before, .cursor-outline::after {
-            content: ''; position: absolute; background: var(--c-accent);
-        }
-        .cursor-outline::before { top: 50%; left: -20%; right: -20%; height: 1px; }
-        .cursor-outline::after { left: 50%; top: -20%; bottom: -20%; width: 1px; }
 
         @keyframes fadeInSlow {
             from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
@@ -311,11 +304,11 @@
 
     <div class="container" vid="11">
         <header class="header-top" vid="12">
-            <a href="index.html" class="nav-text brand" vid="13">LUMO Studios</a>
+            <a href="index.html" class="nav-text brand" vid="13">C4 Studios</a>
             <div style="display: flex; gap: 3rem;" vid="14">
-                <a href="LumoCuratedArchive.html" class="nav-text" style="color: var(--c-accent)" vid="15">Projects</a>
-                <a href="LumoCapabilitites.html" class="nav-text" vid="16">Capabilities</a>
-                <a href="LumoNaritave.html" class="nav-text" vid="16">About</a>
+                <a href="projects.html" class="nav-text" style="color: var(--c-accent)">Projects</a>
+                <a href="LumoCapabilitites.html" class="nav-text">Capabilities</a>
+                <a href="LumoNaritave.html" class="nav-text">About</a>
             </div>
         </header>
 
@@ -397,9 +390,9 @@
         </div>
 
         <footer vid="67">
-            <div class="footer-logo" vid="68">LUMO</div>
+            <div class="footer-logo" vid="68">C4</div>
             <div class="nav-text" style="opacity: 0.5" vid="69">
-                © 2024 LUMO Studios. All rights reserved.
+                © 2024 C4 Studios. All rights reserved.
             </div>
         </footer>
     </div>
@@ -436,8 +429,8 @@
 
         document.querySelectorAll('a, button, .project-card').forEach(el => {
             el.addEventListener('mouseenter', () => {
-                cursorOutline.style.width = '70px';
-                cursorOutline.style.height = '70px';
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
                 cursorOutline.style.borderColor = '#00ff6a';
                 cursorOutline.style.backgroundColor = 'rgba(0, 255, 106, 0.05)';
             });
