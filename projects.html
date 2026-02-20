@@ -38,6 +38,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            cursor: none;
         }
 
         body {
@@ -244,7 +245,6 @@
             text-decoration: none;
             display: inline-block;
             transition: all 0.3s ease;
-            cursor: pointer;
         }
 
         .btn-outline {
@@ -280,6 +280,34 @@
             font-family: var(--font-mono);
             font-size: 0.7rem;
             color: var(--c-text-muted);
+        }
+
+
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 4px;
+            background-color: var(--c-accent);
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(0, 255, 106, 0.4);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
+            mix-blend-mode: screen;
         }
 
         @media (max-width: 900px) {
@@ -465,6 +493,10 @@
         </footer>
     </div>
 
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -567,5 +599,46 @@
             createMiniViewer('preview-4', './previews/project4.pcd');
         });
     </script>
+
+    <script>
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = window.innerWidth / 2;
+        let cursorY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+        });
+
+        function animateCursor() {
+            const ease = 0.1;
+            cursorX += (mouseX - cursorX) * ease;
+            cursorY += (mouseY - cursorY) * ease;
+            cursorOutline.style.left = `${cursorX}px`;
+            cursorOutline.style.top = `${cursorY}px`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, button, .project-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.borderColor = '#00ff6a';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.borderColor = 'rgba(0, 255, 106, 0.4)';
+            });
+        });
+    </script>
+
 </body>
 </html>
