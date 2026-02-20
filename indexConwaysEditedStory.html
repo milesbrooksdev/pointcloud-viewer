@@ -1,0 +1,1670 @@
+<html><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C4 Studios | Mechanical Engineering</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italianno&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --c-bg-base: #f0f7f9;
+            --c-bg-overlay: rgba(0, 128, 128, 0.05);
+            --c-text-main: #0a192f;
+            --c-text-muted: #4a6fa5;
+            --c-accent: #008080;
+            --c-secondary-accent: #00a8a8;
+            --c-golden: #00ced1;
+            --c-grid-line: rgba(10, 25, 47, 0.12);
+
+            --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
+
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-script: 'Italianno', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--c-bg-base);
+            font-family: var(--font-serif);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            color: var(--c-text-main);
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+        }
+
+        .page-stack {
+            position: relative;
+            width: 100%;
+            height: 200vh;
+            transform: translateY(0);
+            transition: transform 700ms var(--ease-fluid);
+        }
+
+        .page-stack.show-easter-egg {
+            transform: translateY(-100vh);
+        }
+
+        .view {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* -------- Main view (existing pointcloud hero) -------- */
+        #three-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .layer-sharp {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .layer-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 2;
+            pointer-events: none;
+            mask-image: radial-gradient(circle 350px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
+            -webkit-mask-image: radial-gradient(circle 350px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
+            transition: backdrop-filter 0.3s ease;
+        }
+
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            opacity: 0.12;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            filter: contrast(120%);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .ui-layer {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 4rem 5rem;
+            pointer-events: none;
+        }
+
+        .nav-text {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 400;
+            color: var(--c-text-muted);
+            pointer-events: auto;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .nav-text:hover {
+            color: var(--c-accent);
+            text-shadow: 0 0 8px rgba(0, 128, 128, 0.4);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            border-bottom: 1px solid rgba(10, 25, 47, 0.10);
+            padding-bottom: 1.5rem;
+        }
+
+        .brand {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-style: italic;
+            color: var(--c-text-main);
+        }
+
+        .hero-text {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+            pointer-events: none;
+            mix-blend-mode: normal;
+        }
+
+        .prompt-main {
+            font-family: var(--font-serif);
+            font-size: 7rem;
+            line-height: 0.85;
+            font-weight: 400;
+            letter-spacing: -0.03em;
+            margin-bottom: 2rem;
+            color: var(--c-text-main);
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeInSlow 3s var(--ease-fluid) forwards 0.5s;
+        }
+
+        .prompt-sub {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--c-accent);
+            opacity: 0;
+            animation: fadeInSlow 3s var(--ease-fluid) forwards 1.2s;
+            text-shadow: 0 0 12px rgba(0, 128, 128, 0.4);
+            margin-bottom: 3rem;
+        }
+
+        .cta-container {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            pointer-events: auto;
+            opacity: 0;
+            animation: fadeInSlow 2s var(--ease-fluid) forwards 1.8s;
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 1.2rem 2.5rem;
+            border: none;
+            transition: all 0.4s var(--ease-fluid);
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--c-accent);
+            color: white;
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            background: var(--c-secondary-accent);
+            box-shadow: 0 0 30px rgba(0, 128, 128, 0.4);
+            animation: pulse-glow 2s infinite;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(10, 25, 47, 0.18);
+            color: var(--c-text-main);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--c-accent);
+            background: rgba(0, 128, 128, 0.08);
+            transform: translateY(-2px);
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 20px rgba(0, 128, 128, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(0, 206, 209, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(0, 128, 128, 0.4); }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.55;
+            animation: bounce 2s infinite;
+            pointer-events: auto;
+            background: transparent;
+            border: 0;
+        }
+
+        .scroll-indicator:hover { opacity: 1; }
+
+        .chevron {
+            width: 15px;
+            height: 15px;
+            border-bottom: 2px solid var(--c-accent);
+            border-right: 2px solid var(--c-accent);
+            transform: rotate(45deg);
+        }
+
+        .chevron-up { transform: rotate(-135deg); }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+            40% { transform: translate(-50%, -10px); }
+            60% { transform: translate(-50%, -5px); }
+        }
+
+        .coords {
+            position: absolute;
+            bottom: 4rem;
+            left: 5rem;
+            font-family: var(--font-mono);
+            font-variant-numeric: tabular-nums;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            color: var(--c-text-muted);
+            border-left: 1px solid var(--c-golden);
+            padding-left: 1rem;
+            line-height: 1.4;
+        }
+
+        .coords::before {
+            content: '||| || | |||';
+            display: block;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            color: var(--c-accent);
+            opacity: 0.6;
+        }
+
+        /* -------- Easter egg Conway view -------- */
+        .conway-view {
+            background: radial-gradient(circle at 50% 35%, rgba(0,168,168,0.09), transparent 60%), var(--c-bg-base);
+        }
+
+        .conway-grid-layer {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, var(--c-grid-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--c-grid-line) 1px, transparent 1px);
+            background-size: 14px 14px;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #conwayCanvas {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: auto;
+            image-rendering: pixelated;
+        }
+
+        .conway-panel {
+            position: absolute;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            z-index: 5;
+            background: rgba(240, 247, 249, 0.92);
+            border: 1px solid rgba(10, 25, 47, 0.16);
+            backdrop-filter: blur(8px);
+            min-width: 110px;
+        }
+
+        .conway-panel button,
+        .conway-panel .counter {
+            width: 100%;
+            border: 0;
+            border-bottom: 1px solid rgba(10, 25, 47, 0.1);
+            background: transparent;
+            padding: 0.65rem 0.45rem;
+            text-align: left;
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--c-text-main);
+            white-space: nowrap;
+        }
+
+        .conway-panel button:hover {
+            background: rgba(0, 128, 128, 0.08);
+        }
+
+        .conway-panel #golRunBtn {
+            background: rgba(0, 128, 128, 0.14);
+            font-weight: 700;
+            color: var(--c-accent);
+        }
+
+        .conway-panel .counter {
+            border-bottom: 0;
+            color: var(--c-text-muted);
+        }
+
+        .conway-title {
+            position: absolute;
+            left: 3rem;
+            top: 3rem;
+            z-index: 5;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--c-text-muted);
+            font-size: 0.7rem;
+        }
+
+        .scroll-up-wrap {
+            position: absolute;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6;
+            animation: bounceUp 2s infinite;
+        }
+
+        .scroll-up-wrap .scroll-indicator {
+            position: relative;
+            top: auto;
+            left: auto;
+            bottom: auto;
+            transform: none;
+            animation: none;
+        }
+
+        @keyframes bounceUp {
+            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+            40% { transform: translate(-50%, 10px); }
+            60% { transform: translate(-50%, 5px); }
+        }
+
+        /* -------- Story Overlay Panel -------- */
+        .story-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 400ms var(--ease-fluid);
+        }
+
+        .story-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .story-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 25, 47, 0.35);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .story-card {
+            position: relative;
+            z-index: 2;
+            width: min(820px, 90vw);
+            max-height: 88vh;
+            background: rgba(240, 247, 249, 0.97);
+            border: 1px solid rgba(0, 128, 128, 0.25);
+            box-shadow: 0 8px 60px rgba(10, 25, 47, 0.25), 0 0 0 1px rgba(0, 206, 209, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(20px) scale(0.98);
+            transition: transform 400ms var(--ease-fluid);
+        }
+
+        .story-overlay.active .story-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .story-card-inner {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex: 1;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,128,128,0.2) transparent;
+        }
+
+        .story-header {
+            padding: 2rem 2.5rem 1.2rem;
+            border-bottom: 1px solid rgba(10, 25, 47, 0.08);
+            flex-shrink: 0;
+        }
+
+        .story-chapter {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            margin-bottom: 0.6rem;
+            opacity: 0.8;
+        }
+
+        .story-title {
+            font-family: var(--font-serif);
+            font-size: 1.9rem;
+            font-weight: 600;
+            line-height: 1.15;
+            color: var(--c-text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .story-body {
+            padding: 1.5rem 2.5rem;
+            flex: 1;
+        }
+
+        .story-text {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            line-height: 1.75;
+            color: rgba(10, 25, 47, 0.8);
+            margin-bottom: 1.2rem;
+        }
+
+        .story-text:last-child { margin-bottom: 0; }
+
+        .story-demo-wrap {
+            margin: 1.2rem 0;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .story-demo {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .story-demo-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .mini-gol {
+            border: 1px solid rgba(0, 128, 128, 0.2);
+            background: rgba(240, 247, 249, 0.6);
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        .story-rule-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .story-rule-item {
+            border: 1px solid rgba(0, 128, 128, 0.15);
+            padding: 1rem;
+            position: relative;
+            background: rgba(0, 128, 128, 0.03);
+        }
+
+        .story-rule-num {
+            font-family: var(--font-script);
+            font-size: 2.4rem;
+            color: rgba(0, 128, 128, 0.15);
+            position: absolute;
+            top: 0.5rem;
+            right: 0.8rem;
+            line-height: 1;
+        }
+
+        .story-rule-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            margin-bottom: 0.4rem;
+        }
+
+        .story-rule-text {
+            font-family: var(--font-serif);
+            font-size: 0.88rem;
+            line-height: 1.55;
+            color: rgba(10, 25, 47, 0.75);
+        }
+
+        .story-footer {
+            padding: 1.2rem 2.5rem;
+            border-top: 1px solid rgba(10, 25, 47, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .story-progress {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            color: var(--c-text-muted);
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .story-pip {
+            width: 5px;
+            height: 5px;
+            background: rgba(0, 128, 128, 0.2);
+            transition: background 0.3s;
+        }
+
+        .story-pip.active {
+            background: var(--c-accent);
+        }
+
+        .story-nav {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .story-btn-back {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.65rem 1.2rem;
+            border: 1px solid rgba(10, 25, 47, 0.15);
+            background: transparent;
+            color: var(--c-text-muted);
+            transition: all 0.3s;
+        }
+
+        .story-btn-back:hover {
+            border-color: var(--c-accent);
+            color: var(--c-accent);
+        }
+
+        .story-btn-back:disabled {
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        .story-btn-close {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(10, 25, 47, 0.15);
+            background: transparent;
+            color: var(--c-text-muted);
+            transition: all 0.3s;
+        }
+
+        .story-btn-close:hover {
+            border-color: var(--c-accent);
+            color: var(--c-accent);
+        }
+
+        .story-btn-next {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.65rem 1.6rem;
+            border: none;
+            background: var(--c-accent);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .story-btn-next:hover {
+            background: var(--c-secondary-accent);
+            box-shadow: 0 0 20px rgba(0,128,128,0.35);
+        }
+
+        .story-shapes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .story-shape-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .story-shape-label {
+            font-family: var(--font-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--c-text-muted);
+            text-align: center;
+        }
+
+        .story-highlight {
+            font-style: italic;
+            color: var(--c-accent);
+        }
+
+        .story-divider {
+            border: none;
+            border-top: 1px solid rgba(0,128,128,0.12);
+            margin: 1rem 0;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            top: 0; left: 0; width: 4px; height: 4px;
+            background-color: var(--c-accent);
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-outline {
+            position: fixed;
+            top: 0; left: 0; width: 40px; height: 40px;
+            border: 1px solid rgba(0, 128, 128, 0.4);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
+            mix-blend-mode: darken;
+        }
+
+        @keyframes fadeInSlow {
+            from { opacity: 0; filter: blur(10px); }
+            to { opacity: 1; filter: blur(0); }
+        }
+
+        @media (max-width: 768px) {
+            .prompt-main { font-size: 3.5rem; }
+            .ui-layer { padding: 2rem; }
+            .coords { display: none; }
+            .cta-container { flex-direction: column; width: 100%; padding: 0 2rem; }
+            .conway-panel { right: 0.75rem; bottom: 0.75rem; min-width: 104px; }
+            .conway-title { left: 1rem; top: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-stack" id="pageStack">
+        <section class="view main-view">
+            <div id="three-container"></div>
+            <div class="layer-sharp"></div>
+            <div class="layer-blur"></div>
+            <div class="noise-overlay"></div>
+
+            <div class="ui-layer">
+                <header class="header-top">
+                    <a href="index.html" class="nav-text brand">C4 Studios</a>
+                    <div style="display: flex; gap: 3rem;">
+                        <a href="projects.html" class="nav-text">Selected Work</a>
+                        <a href="c4-curated-archive.html" class="nav-text">Curated Archive</a>
+                        <a href="c4-capabilities.html" class="nav-text">Capabilities</a>
+                        <a href="c4-about.html" class="nav-text">About</a>
+                    </div>
+                </header>
+
+                <main class="hero-text">
+                    <h1 class="prompt-main">Mechanical<br>Engineering</h1>
+                    <p class="prompt-sub">Precision engineered for the world of tomorrow</p>
+
+                    <div class="cta-container">
+                        <a href="#" class="btn btn-primary">Reach Out</a>
+                        <a href="c4-curated-archive.html" class="btn btn-secondary">View Projects</a>
+                    </div>
+                </main>
+
+                <div class="coords">EST. 2024 / C4 STUDIOS</div>
+
+                <button class="scroll-indicator" id="revealEggBtn" aria-label="Reveal Conway easter egg">
+                    <div class="chevron"></div>
+                </button>
+            </div>
+        </section>
+
+        <section class="view conway-view" id="conwayView">
+            <div class="conway-grid-layer"></div>
+            <canvas id="conwayCanvas"></canvas>
+            <div class="noise-overlay" style="z-index:4;"></div>
+
+            <div class="scroll-up-wrap">
+                <button class="scroll-indicator" id="hideEggBtn" aria-label="Return to main view">
+                    <div class="chevron chevron-up"></div>
+                </button>
+            </div>
+
+            <div class="conway-title">Conway's Game of Life // Hidden Studio Layer</div>
+
+            <div class="conway-panel">
+                <button id="golRunBtn">&#9654; Run [GOL]</button>
+                <button id="golStepBtn">&#8594; Step</button>
+                <button id="golClearBtn">&#10005; Clear</button>
+                <button id="golReseedBtn">&#8635; Reseed</button>
+                <button id="golStoryBtn">&#10022; Story</button>
+                <div class="counter" id="golCounter">GEN: 0 | CELLS: 0</div>
+            </div>
+
+            <!-- Story Overlay -->
+            <div class="story-overlay" id="storyOverlay">
+                <div class="story-backdrop" id="storyBackdrop"></div>
+                <div class="story-card">
+                    <div class="story-card-inner" id="storyCardInner">
+                        <div class="story-header">
+                            <div class="story-chapter" id="storyChapter">Chapter I</div>
+                            <div class="story-title" id="storyTitle">Title</div>
+                        </div>
+                        <div class="story-body" id="storyBody"></div>
+                    </div>
+                    <div class="story-footer">
+                        <div class="story-progress" id="storyProgress"></div>
+                        <div class="story-nav">
+                            <button class="story-btn-close" id="storyCloseBtn">&#10005; Close</button>
+                            <button class="story-btn-back" id="storyBackBtn">&#8249; Back</button>
+                            <button class="story-btn-next" id="storyNextBtn">Continue &#8250;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { PCDLoader } from 'three/addons/loaders/PCDLoader.js';
+
+        const threeContainer = document.getElementById('three-container');
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        threeContainer.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        scene.background = null;
+
+        const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.001, 200);
+        camera.position.set(0, 0, 1);
+        scene.add(camera);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.minDistance = 0.5;
+        controls.maxDistance = 10;
+        controls.enableDamping = true;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.8;
+
+        const loader = new PCDLoader();
+
+        loader.load(
+            './model.pcd',
+            function (points) {
+                points.geometry.center();
+                points.geometry.computeBoundingSphere();
+                const r = points.geometry.boundingSphere?.radius ?? 1.0;
+                controls.target.set(0, 0, 0);
+                controls.update();
+                camera.position.set(0, 0, Math.max(1.5, r * 3.7));
+                camera.near = Math.max(0.001, r / 1000);
+                camera.far  = Math.max(50, r * 20);
+                camera.updateProjectionMatrix();
+                points.material.size = Math.max(0.0015, r / 300);
+                points.material.color.setHex(0x008080);
+                scene.add(points);
+            },
+            undefined,
+            function () { createFallbackGeometry(); }
+        );
+
+        function createFallbackGeometry() {
+            const particleCount = 10000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                const radius = 0.3 + Math.random() * 0.2;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+
+                positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                positions[i3 + 2] = radius * Math.cos(phi);
+
+                const color = new THREE.Color(0x008080);
+                colors[i3] = color.r;
+                colors[i3 + 1] = color.g;
+                colors[i3 + 2] = color.b;
+            }
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({ size: 0.003, vertexColors: true, transparent: true, opacity: 0.8 });
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+            window.fallbackPoints = points;
+        }
+
+        const ambientLight = new THREE.AmbientLight(0xe0f2f1, 0.8);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0x008080, 1.5);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            initConwaySize();
+        });
+
+        function render() {
+            requestAnimationFrame(render);
+            controls.update();
+            if (window.fallbackPoints) window.fallbackPoints.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        render();
+
+        /* --- Swipe easter egg controls --- */
+        const pageStack = document.getElementById('pageStack');
+        document.getElementById('revealEggBtn').addEventListener('click', () => {
+            pageStack.classList.add('show-easter-egg');
+        });
+        document.getElementById('hideEggBtn').addEventListener('click', () => {
+            pageStack.classList.remove('show-easter-egg');
+        });
+
+        /* --- Conway implementation themed for C4 palette --- */
+        const canvas = document.getElementById('conwayCanvas');
+        const ctx = canvas.getContext('2d');
+        const CELL = 14;
+        const GOL_INTERVAL = 120;
+        const cells = new Set();
+
+        const runBtn = document.getElementById('golRunBtn');
+        const stepBtn = document.getElementById('golStepBtn');
+        const clearBtn = document.getElementById('golClearBtn');
+        const reseedBtn = document.getElementById('golReseedBtn');
+        const storyBtn = document.getElementById('golStoryBtn');
+        const counter = document.getElementById('golCounter');
+
+        let generation = 0;
+        let running = false;
+        let intervalId = null;
+
+        function cellKey(x, y) { return `${x},${y}`; }
+        function parseKey(key) { const [x, y] = key.split(','); return [+x, +y]; }
+
+        // =====================================================================
+        // PIXEL FONT — for slide 0 canvas text
+        // =====================================================================
+        const FONT_5x7 = {
+            'A':['01110','10001','10001','11111','10001','10001','10001'],
+            'B':['11110','10001','10001','11110','10001','10001','11110'],
+            'C':['01110','10001','10000','10000','10000','10001','01110'],
+            'D':['11110','10001','10001','10001','10001','10001','11110'],
+            'E':['11111','10000','10000','11110','10000','10000','11111'],
+            'F':['11111','10000','10000','11110','10000','10000','10000'],
+            'G':['01110','10001','10000','10111','10001','10001','01111'],
+            'H':['10001','10001','10001','11111','10001','10001','10001'],
+            'I':['11111','00100','00100','00100','00100','00100','11111'],
+            'J':['00111','00010','00010','00010','10010','10010','01100'],
+            'K':['10001','10010','10100','11000','10100','10010','10001'],
+            'L':['10000','10000','10000','10000','10000','10000','11111'],
+            'M':['10001','11011','10101','10101','10001','10001','10001'],
+            'N':['10001','11001','10101','10011','10001','10001','10001'],
+            'O':['01110','10001','10001','10001','10001','10001','01110'],
+            'P':['11110','10001','10001','11110','10000','10000','10000'],
+            'Q':['01110','10001','10001','10001','10101','10010','01101'],
+            'R':['11110','10001','10001','11110','10100','10010','10001'],
+            'S':['01111','10000','10000','01110','00001','00001','11110'],
+            'T':['11111','00100','00100','00100','00100','00100','00100'],
+            'U':['10001','10001','10001','10001','10001','10001','01110'],
+            'V':['10001','10001','10001','10001','10001','01010','00100'],
+            'W':['10001','10001','10001','10101','10101','11011','10001'],
+            'X':['10001','10001','01010','00100','01010','10001','10001'],
+            'Y':['10001','10001','01010','00100','00100','00100','00100'],
+            'Z':['11111','00001','00010','00100','01000','10000','11111'],
+            '-':['00000','00000','00000','11111','00000','00000','00000'],
+            "'":['00100','00100','00100','00000','00000','00000','00000'],
+            ' ':['00000','00000','00000','00000','00000','00000','00000']
+        };
+
+        function textToCellList(text, startCol, startRow, maxCols) {
+            const words = text.toUpperCase().split(/\s+/);
+            const lines = [];
+            let line = '';
+            const approxCharCols = 6;
+            const maxChars = Math.max(8, Math.floor(maxCols / approxCharCols));
+            for (const w of words) {
+                const candidate = line ? `${line} ${w}` : w;
+                if (candidate.length <= maxChars) line = candidate;
+                else { if (line) lines.push(line); line = w; }
+            }
+            if (line) lines.push(line);
+            const list = [];
+            lines.forEach((ln, lineIdx) => {
+                let xOffset = 0;
+                for (const chRaw of ln) {
+                    const ch = FONT_5x7[chRaw] ? chRaw : ' ';
+                    const glyph = FONT_5x7[ch];
+                    for (let gy = 0; gy < glyph.length; gy++) {
+                        for (let gx = 0; gx < glyph[gy].length; gx++) {
+                            if (glyph[gy][gx] === '1') list.push({ x: startCol + xOffset + gx, y: startRow + lineIdx * 9 + gy });
+                        }
+                    }
+                    xOffset += 6;
+                }
+            });
+            list.sort((a, b) => (a.y - b.y) || (a.x - b.x));
+            return list;
+        }
+
+        let storyTimer = null;
+        function animateStoryCells(cellList) {
+            if (storyTimer) { clearTimeout(storyTimer); storyTimer = null; }
+            let i = 0;
+            const drawNext = () => {
+                for (let n = 0; n < 10 && i < cellList.length; n++, i++) cells.add(cellKey(cellList[i].x, cellList[i].y));
+                updateCounter(); renderConway();
+                if (i < cellList.length) storyTimer = setTimeout(drawNext, 18);
+            };
+            drawNext();
+        }
+
+        // =====================================================================
+        // STORY SYSTEM — slide 0 draws on canvas, slides 1+ use overlay
+        // =====================================================================
+        const storyOverlay = document.getElementById('storyOverlay');
+        const storyChapterEl = document.getElementById('storyChapter');
+        const storyTitleEl = document.getElementById('storyTitle');
+        const storyBodyEl = document.getElementById('storyBody');
+        const storyProgressEl = document.getElementById('storyProgress');
+        const storyNextBtn = document.getElementById('storyNextBtn');
+        const storyBackBtn = document.getElementById('storyBackBtn');
+        const storyCloseBtn = document.getElementById('storyCloseBtn');
+        const storyBackdrop = document.getElementById('storyBackdrop');
+
+        // Overlay slides start at index 1 of the story (index 0 is canvas text)
+        let currentStorySlide = -1; // -1 = not started, 0 = canvas slide done, 1+ = overlay
+        let miniGolIntervals = [];
+
+        // ------ Mini GoL engine — canvas must be in DOM before calling ------
+        function miniGolInit(canvasEl, cellSize, pattern, speed) {
+            const w = canvasEl.width;
+            const h = canvasEl.height;
+            const ctx2 = canvasEl.getContext('2d');
+            const cols = Math.floor(w / cellSize);
+            const rows = Math.floor(h / cellSize);
+            let alive = new Set();
+
+            const patRows = pattern.length;
+            const patCols = Math.max(...pattern.map(r => r.length));
+            const ox = Math.floor((cols - patCols) / 2);
+            const oy = Math.floor((rows - patRows) / 2);
+            for (let r = 0; r < patRows; r++)
+                for (let c = 0; c < pattern[r].length; c++)
+                    if (pattern[r][c]) alive.add(`${ox+c},${oy+r}`);
+
+            function draw() {
+                ctx2.clearRect(0, 0, w, h);
+                ctx2.strokeStyle = 'rgba(0,128,128,0.12)';
+                ctx2.lineWidth = 0.5;
+                for (let x = 0; x <= cols; x++) { ctx2.beginPath(); ctx2.moveTo(x*cellSize,0); ctx2.lineTo(x*cellSize,h); ctx2.stroke(); }
+                for (let y = 0; y <= rows; y++) { ctx2.beginPath(); ctx2.moveTo(0,y*cellSize); ctx2.lineTo(w,y*cellSize); ctx2.stroke(); }
+                ctx2.fillStyle = '#008080';
+                for (const k of alive) {
+                    const [x,y] = k.split(',').map(Number);
+                    ctx2.fillRect(x*cellSize+1, y*cellSize+1, cellSize-1.5, cellSize-1.5);
+                }
+            }
+
+            function step() {
+                const nc = new Map();
+                for (const k of alive) {
+                    const [x,y] = k.split(',').map(Number);
+                    for (let dx=-1;dx<=1;dx++) for (let dy=-1;dy<=1;dy++) {
+                        if (dx===0&&dy===0) continue;
+                        const nk=`${x+dx},${y+dy}`; nc.set(nk,(nc.get(nk)||0)+1);
+                    }
+                }
+                const next=new Set();
+                for (const [k,cnt] of nc) if (cnt===3||(cnt===2&&alive.has(k))) next.add(k);
+                alive=next;
+            }
+
+            draw();
+            const iv = setInterval(()=>{step();draw();}, speed);
+            miniGolIntervals.push(iv);
+        }
+
+        // Build a canvas, append to parent, then init (so it's in DOM)
+        function mkCanvas(parent, w, h, cellSize, pattern, speed) {
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            c.className = 'mini-gol';
+            c.style.width = w+'px'; c.style.height = h+'px';
+            parent.appendChild(c);
+            miniGolInit(c, cellSize, pattern, speed);
+        }
+
+        function stopAllMiniGol() {
+            miniGolIntervals.forEach(iv => clearInterval(iv));
+            miniGolIntervals = [];
+        }
+
+        // ------ Pattern library ------
+        const PATS = {
+            block:   [[1,1],[1,1]],
+            beehive: [[0,1,1,0],[1,0,0,1],[0,1,1,0]],
+            loaf:    [[0,1,1,0],[1,0,0,1],[0,1,0,1],[0,0,1,0]],
+            boat:    [[1,1,0],[1,0,1],[0,1,0]],
+            tub:     [[0,1,0],[1,0,1],[0,1,0]],
+            pond:    [[0,1,1,0],[1,0,0,1],[1,0,0,1],[0,1,1,0]],
+            blinker: [[1,1,1]],
+            toad:    [[0,1,1,1],[1,1,1,0]],
+            beacon:  [[1,1,0,0],[1,0,0,0],[0,0,0,1],[0,0,1,1]],
+            pulsar:  [
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+            ],
+            pentadeca: [[1,1,1],[1,0,1],[1,1,1],[1,1,1],[1,1,1],[1,0,1],[1,1,1],[1,1,1],[1,1,1],[1,0,1]],
+            fig8: [[1,1,1,0,0,0],[1,1,1,0,0,0],[1,1,1,0,0,0],[0,0,0,1,1,1],[0,0,0,1,1,1],[0,0,0,1,1,1]],
+            glider: [[0,1,0],[0,0,1],[1,1,1]],
+            lwss:   [[0,1,0,0,1],[1,0,0,0,0],[1,0,0,0,1],[1,1,1,1,0]],
+            lonely: [[0,0,0,0,0],[0,0,0,0,0],[0,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+            dense:  [[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],
+            birth:  [[0,0,0,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+            glidergun: [
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+                [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+                [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ],
+        };
+
+        // ------ Overlay slides (index 0 here = story slide 1) ------
+        const SLIDES = [
+            // Slide 1 — Four Laws
+            {
+                chapter: 'Chapter I',
+                title: 'Four Laws',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Four rules. That is all. They govern every cell, at every moment, with no exceptions and no memory of the past.</p>`;
+                    const grid = document.createElement('div');
+                    grid.className = 'story-rule-grid';
+                    const rules = [
+                        { n:'I',   title:'Underpopulation', text:'Fewer than 2 neighbors: the cell dies.' },
+                        { n:'II',  title:'Survival',        text:'2 or 3 neighbors: the cell lives on.' },
+                        { n:'III', title:'Overpopulation',  text:'More than 3 neighbors: the cell dies.' },
+                        { n:'IV',  title:'Reproduction',    text:'Exactly 3 neighbors: a dead cell is born.' },
+                    ];
+                    for (const r of rules) {
+                        const item = document.createElement('div');
+                        item.className = 'story-rule-item';
+                        item.innerHTML = `<div class="story-rule-num">${r.n}</div><div class="story-rule-title">${r.title}</div><div class="story-rule-text">${r.text}</div>`;
+                        grid.appendChild(item);
+                    }
+                    body.appendChild(grid);
+                }
+            },
+
+            // Slide 2 — Rules in Motion
+            {
+                chapter: 'Chapter I',
+                title: 'Watch the Rules',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Each grid below obeys the same four laws. The only difference is where it starts.</p>`;
+                    const grid = document.createElement('div');
+                    grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;';
+                    const demos = [
+                        { label: 'I. Underpopulation — a lone cell vanishes', pat: PATS.lonely, spd: 700 },
+                        { label: 'II. Survival — the blinker oscillates forever', pat: PATS.blinker, spd: 280 },
+                        { label: 'III. Overpopulation — a dense mass erodes', pat: PATS.dense, spd: 200 },
+                        { label: 'IV. Reproduction — born from three neighbors', pat: PATS.birth, spd: 350 },
+                    ];
+                    for (const d of demos) {
+                        const wrap = document.createElement('div');
+                        const lbl = document.createElement('div');
+                        lbl.className = 'story-demo-label';
+                        lbl.textContent = d.label;
+                        lbl.style.marginBottom = '0.4rem';
+                        wrap.appendChild(lbl);
+                        mkCanvas(wrap, 188, 130, 13, d.pat, d.spd);
+                        grid.appendChild(wrap);
+                    }
+                    body.appendChild(grid);
+                }
+            },
+
+            // Slide 3 — Still Lifes
+            {
+                chapter: 'Chapter II',
+                title: 'The Still Lifes',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Some patterns find perfect balance — every cell has just enough neighbors to survive, and no dead cell has enough to be born. They never change. These are the atoms of Life.</p>`;
+                    const grid = document.createElement('div');
+                    grid.className = 'story-shapes-grid';
+                    const shapes = [
+                        { label: 'Block',   pat: PATS.block },
+                        { label: 'Beehive', pat: PATS.beehive },
+                        { label: 'Loaf',    pat: PATS.loaf },
+                        { label: 'Boat',    pat: PATS.boat },
+                        { label: 'Tub',     pat: PATS.tub },
+                        { label: 'Pond',    pat: PATS.pond },
+                    ];
+                    for (const s of shapes) {
+                        const item = document.createElement('div');
+                        item.className = 'story-shape-item';
+                        const lbl = document.createElement('div');
+                        lbl.className = 'story-shape-label';
+                        lbl.textContent = s.label;
+                        mkCanvas(item, 120, 100, 14, s.pat, 800);
+                        item.appendChild(lbl);
+                        grid.appendChild(item);
+                    }
+                    body.appendChild(grid);
+                }
+            },
+
+            // Slide 4 — Oscillators
+            {
+                chapter: 'Chapter III',
+                title: 'The Oscillators',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Others pulse. They cycle through a fixed sequence of states, returning to their origin every N generations. The universe has a heartbeat.</p>`;
+                    const wrap = document.createElement('div');
+                    wrap.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;';
+                    const osc = [
+                        { label: 'Blinker  ·  p2',      pat: PATS.blinker,   sz:14, spd:280, w:140, h:100 },
+                        { label: 'Toad  ·  p2',          pat: PATS.toad,      sz:14, spd:300, w:140, h:100 },
+                        { label: 'Beacon  ·  p2',        pat: PATS.beacon,    sz:14, spd:300, w:140, h:100 },
+                        { label: 'Pulsar  ·  p3',        pat: PATS.pulsar,    sz: 9, spd:200, w:140, h:140 },
+                        { label: 'Pentadecathlon  ·  p15',pat:PATS.pentadeca, sz:13, spd:160, w:140, h:140 },
+                        { label: 'Figure Eight  ·  p8',  pat: PATS.fig8,      sz:13, spd:180, w:140, h:110 },
+                    ];
+                    for (const o of osc) {
+                        const item = document.createElement('div');
+                        item.className = 'story-shape-item';
+                        const lbl = document.createElement('div');
+                        lbl.className = 'story-shape-label';
+                        lbl.textContent = o.label;
+                        mkCanvas(item, o.w, o.h, o.sz, o.pat, o.spd);
+                        item.appendChild(lbl);
+                        wrap.appendChild(item);
+                    }
+                    body.appendChild(wrap);
+                }
+            },
+
+            // Slide 5 — Gliders & Spaceships
+            {
+                chapter: 'Chapter IV',
+                title: 'The Wanderers',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Some patterns move. They translate across the grid while maintaining their form — spaceships sailing through an infinite sea. The Glider is perhaps the most famous object in all of mathematics.</p>`;
+                    const demoWrap = document.createElement('div');
+                    demoWrap.className = 'story-demo-wrap';
+
+                    const d1 = document.createElement('div');
+                    d1.className = 'story-demo';
+                    const l1 = document.createElement('div');
+                    l1.className = 'story-demo-label'; l1.textContent = 'Glider — travels diagonally, period 4';
+                    d1.appendChild(l1);
+                    mkCanvas(d1, 220, 180, 14, PATS.glider, 180);
+
+                    const d2 = document.createElement('div');
+                    d2.className = 'story-demo';
+                    const l2 = document.createElement('div');
+                    l2.className = 'story-demo-label'; l2.textContent = 'Lightweight Spaceship — travels horizontally';
+                    d2.appendChild(l2);
+                    mkCanvas(d2, 220, 180, 12, PATS.lwss, 200);
+
+                    demoWrap.appendChild(d1);
+                    demoWrap.appendChild(d2);
+                    body.appendChild(demoWrap);
+                    const p = document.createElement('p');
+                    p.className = 'story-text';
+                    p.style.marginTop = '0.5rem';
+                    p.innerHTML = 'Larger spaceships exist in every direction and at many speeds — from c/2 down to arbitrarily slow.';
+                    body.appendChild(p);
+                }
+            },
+
+            // Slide 6 — Glider Gun
+            {
+                chapter: 'Chapter V',
+                title: 'The Glider Gun',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">In 1970, Conway offered $50 to anyone who could prove a pattern could grow forever. It was claimed in weeks — with the Gosper Glider Gun, which fires a new glider every 30 generations, endlessly.</p>`;
+                    const lbl = document.createElement('div');
+                    lbl.className = 'story-demo-label';
+                    lbl.style.marginBottom = '0.5rem';
+                    lbl.textContent = 'Gosper Glider Gun — fires every 30 generations';
+                    body.appendChild(lbl);
+                    mkCanvas(body, 520, 150, 10, PATS.glidergun, 120);
+                    const p = document.createElement('p');
+                    p.className = 'story-text';
+                    p.style.marginTop = '1rem';
+                    p.innerHTML = 'This proved that patterns in the Game of Life can grow without bound — and hinted at something far more profound.';
+                    body.appendChild(p);
+                }
+            },
+
+            // Slide 7 — Turing Complete
+            {
+                chapter: 'Chapter VI',
+                title: 'A Universe That Thinks',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Gliders as signals. Guns as clocks. Collisions as logic gates. From these, researchers built AND, OR, and NOT gates inside the Game of Life — then a Turing machine — then a universal computer.</p>`;
+                    const box = document.createElement('div');
+                    box.style.cssText = 'border-left:3px solid var(--c-accent);padding:1rem 1.2rem;margin:1rem 0;background:rgba(0,128,128,0.04);';
+                    box.innerHTML = `<div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-accent);margin-bottom:0.4rem;">Turing Complete</div><div style="font-family:var(--font-serif);font-size:0.92rem;line-height:1.6;color:rgba(10,25,47,0.8);">The Game of Life can perform any computation any machine can perform. It has even been used to simulate itself — a Game of Life running inside a Game of Life.</div>`;
+                    body.appendChild(box);
+                    const p = document.createElement('p');
+                    p.className = 'story-text';
+                    p.textContent = 'Four rules. An infinite grid. The computational power of every computer ever built.';
+                    body.appendChild(p);
+                }
+            },
+
+            // Slide 8 — Epilogue
+            {
+                chapter: 'Epilogue',
+                title: 'Simple Rules. Infinite Possibility.',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Cellular automata appear in the pigment of shells, the spread of fire, the growth of cities, the firing of neurons. Complex phenomena emerging from simple rules. This is the nature of emergence.</p>`;
+                    const lbl = document.createElement('div');
+                    lbl.className = 'story-demo-label';
+                    lbl.style.marginBottom = '0.5rem';
+                    lbl.textContent = 'From the same four rules — a new universe begins';
+                    body.appendChild(lbl);
+                    const randPat = [];
+                    for (let r=0;r<16;r++){const row=[];for(let c=0;c<44;c++)row.push(Math.random()>0.62?1:0);randPat.push(row);}
+                    mkCanvas(body, 490, 170, 11, randPat, 120);
+                    const p = document.createElement('p');
+                    p.className = 'story-text';
+                    p.style.marginTop = '1rem';
+                    p.innerHTML = 'The canvas behind this card is yours. Draw something. Run it. <em class="story-highlight">See what emerges.</em>';
+                    body.appendChild(p);
+                }
+            },
+        ];
+
+        // ------ Progress pips ------
+        function renderProgress(overlayIdx) {
+            storyProgressEl.innerHTML = '';
+            // total = 1 canvas slide + SLIDES.length overlay slides
+            const total = 1 + SLIDES.length;
+            const current = overlayIdx + 1; // 0-based: canvas=0, overlay[0]=1, etc.
+            for (let i = 0; i < total; i++) {
+                const pip = document.createElement('div');
+                pip.className = 'story-pip' + (i === current ? ' active' : '');
+                storyProgressEl.appendChild(pip);
+            }
+        }
+
+        // ------ Render an overlay slide ------
+        function renderSlide(idx) {
+            stopAllMiniGol();
+            const slide = SLIDES[idx];
+            storyChapterEl.textContent = slide.chapter;
+            storyTitleEl.textContent = slide.title;
+            storyBodyEl.innerHTML = '';
+            slide.build(storyBodyEl);
+            document.getElementById('storyCardInner').scrollTop = 0;
+            renderProgress(idx);
+            const isLast = idx === SLIDES.length - 1;
+            storyNextBtn.textContent = isLast ? 'Begin Again ↺' : 'Continue ›';
+            storyBackBtn.disabled = false;
+        }
+
+        function openOverlay(idx) {
+            currentStorySlide = idx;
+            renderSlide(idx);
+            storyOverlay.classList.add('active');
+        }
+
+        function closeStory() {
+            stopAllMiniGol();
+            storyOverlay.classList.remove('active');
+        }
+
+        // ------ Story button: slide 0 draws on canvas, then opens overlay ------
+        storyBtn.addEventListener('click', () => {
+            if (currentStorySlide === -1) {
+                // First click: draw canvas text
+                stopConway();
+                cells.clear();
+                generation = 0;
+                updateCounter();
+                renderConway();
+                const cols = Math.max(1, Math.floor(canvas.width / CELL));
+                const msg = 'Cellular Automata and Conways Game of Life';
+                const cellList = textToCellList(msg, 3, 4, Math.max(20, cols - 24));
+                animateStoryCells(cellList);
+                currentStorySlide = 0;
+                storyBtn.textContent = '✦ Continue Story';
+            } else {
+                // Subsequent clicks: open overlay at slide 0
+                currentStorySlide = 0;
+                openOverlay(0);
+            }
+        });
+
+        storyCloseBtn.addEventListener('click', closeStory);
+        storyBackdrop.addEventListener('click', closeStory);
+
+        storyNextBtn.addEventListener('click', () => {
+            const next = currentStorySlide + 1;
+            if (next >= SLIDES.length) {
+                closeStory();
+                currentStorySlide = -1;
+                storyBtn.textContent = '✦ Story';
+                seedConway();
+                startConway();
+            } else {
+                currentStorySlide = next;
+                renderSlide(currentStorySlide);
+            }
+        });
+
+        storyBackBtn.addEventListener('click', () => {
+            if (currentStorySlide > 0) {
+                currentStorySlide--;
+                renderSlide(currentStorySlide);
+            } else {
+                // Back from first overlay slide — close overlay, stay on canvas
+                closeStory();
+            }
+        });
+
+        function resetStoryButton() {
+            currentStorySlide = -1;
+            storyBtn.textContent = '✦ Story';
+            closeStory();
+        }
+
+        function initConwaySize() {
+            // Use viewport dimensions directly so seeding spans the full visible Conway section.
+            canvas.width = Math.round(window.innerWidth);
+            canvas.height = Math.round(window.innerHeight);
+            renderConway();
+        }
+
+        function renderConway() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#008080';
+            for (const key of cells) {
+                const [x, y] = parseKey(key);
+                ctx.fillRect(x * CELL + 1, y * CELL + 1, CELL - 1, CELL - 1);
+            }
+        }
+
+        function updateCounter() {
+            counter.textContent = `GEN: ${generation} | CELLS: ${cells.size}`;
+        }
+
+        function stepConway() {
+            const neighborCount = new Map();
+            for (const key of cells) {
+                const [x, y] = parseKey(key);
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        if (dx === 0 && dy === 0) continue;
+                        const nk = cellKey(x + dx, y + dy);
+                        neighborCount.set(nk, (neighborCount.get(nk) || 0) + 1);
+                    }
+                }
+            }
+
+            const next = new Set();
+            for (const [key, count] of neighborCount) {
+                if (count === 3 || (count === 2 && cells.has(key))) next.add(key);
+            }
+
+            cells.clear();
+            for (const k of next) cells.add(k);
+            generation++;
+            updateCounter();
+            renderConway();
+        }
+
+        function stopConway() {
+            if (!running) return;
+            running = false;
+            clearInterval(intervalId);
+            intervalId = null;
+            runBtn.textContent = '▶ Run [GOL]';
+        }
+
+        function startConway() {
+            if (running) return;
+            running = true;
+            intervalId = setInterval(stepConway, GOL_INTERVAL);
+            runBtn.textContent = '■ Pause [GOL]';
+        }
+
+        function seedConway() {
+            cells.clear();
+            const cols = Math.max(1, Math.floor(canvas.width / CELL));
+            const rows = Math.max(1, Math.floor(canvas.height / CELL));
+
+            // Scatter clusters across the whole viewport (not just one corner).
+            for (let s = 0; s < 40; s++) {
+                const sx = Math.floor(Math.random() * cols);
+                const sy = Math.floor(Math.random() * rows);
+                const len = 8 + Math.floor(Math.random() * 28);
+                const dx = [-1, 0, 1][Math.floor(Math.random() * 3)];
+                const dy = [-1, 0, 1][Math.floor(Math.random() * 3)];
+
+                for (let i = 0; i < len; i++) {
+                    const cx = sx + i * dx;
+                    const cy = sy + i * dy;
+                    if (cx >= 0 && cy >= 0 && cx < cols && cy < rows && Math.random() > 0.2) {
+                        cells.add(cellKey(cx, cy));
+                    }
+                }
+            }
+
+            generation = 0;
+            updateCounter();
+            renderConway();
+        }
+
+        runBtn.addEventListener('click', () => running ? stopConway() : startConway());
+        stepBtn.addEventListener('click', () => { stopConway(); stepConway(); });
+        clearBtn.addEventListener('click', () => {
+            stopConway();
+            cells.clear();
+            generation = 0;
+            resetStoryButton();
+            updateCounter();
+            renderConway();
+        });
+        reseedBtn.addEventListener('click', () => {
+            stopConway();
+            seedConway();
+            resetStoryButton();
+        });
+        // storyBtn click is now handled by the story overlay system below
+
+        function getGridCellFromPointer(e) {
+            const rect = canvas.getBoundingClientRect();
+            const gx = Math.floor((e.clientX - rect.left) / CELL);
+            const gy = Math.floor((e.clientY - rect.top) / CELL);
+            const cols = Math.floor(canvas.width / CELL);
+            const rows = Math.floor(canvas.height / CELL);
+            if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) return null;
+            return { gx, gy, key: cellKey(gx, gy) };
+        }
+
+        let painting = false;
+        let paintMode = 'add';
+
+        canvas.addEventListener('pointerdown', (e) => {
+            const cell = getGridCellFromPointer(e);
+            if (!cell) return;
+            painting = true;
+            paintMode = cells.has(cell.key) ? 'remove' : 'add';
+            if (paintMode === 'add') cells.add(cell.key); else cells.delete(cell.key);
+            updateCounter();
+            renderConway();
+            canvas.setPointerCapture(e.pointerId);
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (!painting) return;
+            const cell = getGridCellFromPointer(e);
+            if (!cell) return;
+            if (paintMode === 'add') cells.add(cell.key); else cells.delete(cell.key);
+            updateCounter();
+            renderConway();
+        });
+
+        canvas.addEventListener('pointerup', (e) => {
+            painting = false;
+            if (canvas.hasPointerCapture(e.pointerId)) {
+                canvas.releasePointerCapture(e.pointerId);
+            }
+        });
+
+        canvas.addEventListener('pointercancel', () => {
+            painting = false;
+        });
+
+        initConwaySize();
+        resetStoryButton();
+        seedConway();
+    </script>
+
+    <script>
+        const blurLayer = document.querySelector('.layer-blur');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = window.innerWidth / 2;
+        let cursorY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+        });
+
+        function animateCursor() {
+            const ease = 0.15;
+            cursorX += (mouseX - cursorX) * ease;
+            cursorY += (mouseY - cursorY) * ease;
+            cursorOutline.style.left = `${cursorX}px`;
+            cursorOutline.style.top = `${cursorY}px`;
+
+            const xPercent = (cursorX / window.innerWidth) * 100;
+            const yPercent = (cursorY / window.innerHeight) * 100;
+            blurLayer.style.setProperty('--x', `${xPercent}%`);
+            blurLayer.style.setProperty('--y', `${yPercent}%`);
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('.btn, .nav-text, .brand, .scroll-indicator, .conway-panel button').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.borderColor = '#008080';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.borderColor = 'rgba(0, 128, 128, 0.4)';
+            });
+        });
+    </script>
+</body></html>
