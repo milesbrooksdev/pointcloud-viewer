@@ -61,21 +61,21 @@
             position: relative;
             z-index: 10;
         }
-
         .nav-text {
             font-family: var(--font-mono);
             font-size: 0.7rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             font-weight: 400;
-            color: var(--c-text-main);
+            color: var(--c-text-muted);
             pointer-events: auto;
             transition: color 0.3s ease;
             text-decoration: none;
         }
-        
-        .nav-text:hover {
+
+        .nav-text:hover, .nav-text.active {
             color: var(--c-accent);
+            text-shadow: 0 0 8px rgba(0, 255, 106, 0.5);
         }
 
         .header-top {
@@ -85,16 +85,18 @@
             width: 100%;
             border-bottom: 1px solid rgba(0, 255, 106, 0.15);
             padding-bottom: 1.5rem;
-            margin-bottom: 5rem;
         }
 
         .brand {
+            font-family: var(--font-serif);
             font-size: 2rem;
             font-weight: 400;
             letter-spacing: -0.02em;
             text-transform: uppercase;
             font-style: italic;
+            color: var(--c-text-main);
         }
+
 
         .page-header {
             margin-bottom: 6rem;
@@ -264,7 +266,7 @@
             z-index: 9999;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
             mix-blend-mode: screen;
         }
 
@@ -306,9 +308,9 @@
         <header class="header-top" vid="12">
             <a href="index.html" class="nav-text brand" vid="13">C4 Studios</a>
             <div style="display: flex; gap: 3rem;" vid="14">
-                <a href="projects.html" class="nav-text" style="color: var(--c-accent)">Projects</a>
-                <a href="LumoCapabilitites.html" class="nav-text">Capabilities</a>
-                <a href="LumoNaritave.html" class="nav-text">About</a>
+                <a href="c4-curated-archive.html" class="nav-text" style="color: var(--c-accent)">Projects</a>
+                <a href="c4-capabilities.html" class="nav-text">Capabilities</a>
+                <a href="c4-about.html" class="nav-text">About</a>
             </div>
         </header>
 
@@ -432,14 +434,12 @@
                 cursorOutline.style.width = '60px';
                 cursorOutline.style.height = '60px';
                 cursorOutline.style.borderColor = '#00ff6a';
-                cursorOutline.style.backgroundColor = 'rgba(0, 255, 106, 0.05)';
-            });
+                            });
             el.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
                 cursorOutline.style.borderColor = 'rgba(0, 255, 106, 0.4)';
-                cursorOutline.style.backgroundColor = 'transparent';
-            });
+                            });
         });
 
         

@@ -317,7 +317,7 @@
             z-index: 9999;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
             mix-blend-mode: screen;
         }
 
@@ -348,9 +348,9 @@
         <header class="header-top">
             <a href="index.html" class="nav-text brand">C4 Studios</a>
             <div style="display: flex; gap: 3rem;">
-                <a href="projects.html" class="nav-text">Projects</a>
-                <a href="LumoCapabilitites.html" class="nav-text">Capabilities</a>
-                <a href="LumoNaritave.html" class="nav-text">About</a>
+                <a href="c4-curated-archive.html" class="nav-text">Projects</a>
+                <a href="c4-capabilities.html" class="nav-text">Capabilities</a>
+                <a href="c4-about.html" class="nav-text">About</a>
             </div>
         </header>
 
@@ -360,7 +360,7 @@
 
             <div class="cta-container">
                 <a href="#" class="btn btn-primary">Reach Out</a>
-                <a href="projects.html" class="btn btn-secondary">View Projects</a>
+                <a href="c4-curated-archive.html" class="btn btn-secondary">View Projects</a>
             </div>
         </main>
 
@@ -540,14 +540,12 @@
                 cursorOutline.style.width = '60px';
                 cursorOutline.style.height = '60px';
                 cursorOutline.style.borderColor = '#00ff6a';
-                cursorOutline.style.backgroundColor = 'rgba(0, 255, 106, 0.05)';
-            });
+                            });
             el.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
                 cursorOutline.style.borderColor = 'rgba(0, 255, 106, 0.4)';
-                cursorOutline.style.backgroundColor = 'transparent';
-            });
+                            });
         });
     </script>
 </body></html>
