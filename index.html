@@ -647,9 +647,9 @@
         function parseKey(key) { const [x, y] = key.split(','); return [+x, +y]; }
 
         function initConwaySize() {
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = Math.round(rect.width);
-            canvas.height = Math.round(rect.height);
+            // Use viewport dimensions directly so seeding spans the full visible Conway section.
+            canvas.width = Math.round(window.innerWidth);
+            canvas.height = Math.round(window.innerHeight);
             renderConway();
         }
 
@@ -708,22 +708,26 @@
 
         function seedConway() {
             cells.clear();
-            const cols = Math.floor(canvas.width / CELL);
-            const rows = Math.floor(canvas.height / CELL);
-            for (let s = 0; s < 14; s++) {
-                let sx = Math.floor(Math.random() * cols);
-                let sy = Math.floor(Math.random() * rows);
-                const len = 10 + Math.floor(Math.random() * 24);
-                const dx = Math.random() > 0.5 ? 1 : -1;
-                const dy = Math.random() > 0.6 ? 1 : 0;
+            const cols = Math.max(1, Math.floor(canvas.width / CELL));
+            const rows = Math.max(1, Math.floor(canvas.height / CELL));
+
+            // Scatter clusters across the whole viewport (not just one corner).
+            for (let s = 0; s < 40; s++) {
+                const sx = Math.floor(Math.random() * cols);
+                const sy = Math.floor(Math.random() * rows);
+                const len = 8 + Math.floor(Math.random() * 28);
+                const dx = [-1, 0, 1][Math.floor(Math.random() * 3)];
+                const dy = [-1, 0, 1][Math.floor(Math.random() * 3)];
+
                 for (let i = 0; i < len; i++) {
                     const cx = sx + i * dx;
                     const cy = sy + i * dy;
-                    if (cx >= 0 && cy >= 0 && cx < cols && cy < rows && Math.random() > 0.25) {
+                    if (cx >= 0 && cy >= 0 && cx < cols && cy < rows && Math.random() > 0.2) {
                         cells.add(cellKey(cx, cy));
                     }
                 }
             }
+
             generation = 0;
             updateCounter();
             renderConway();
@@ -734,14 +738,48 @@
         clearBtn.addEventListener('click', () => { stopConway(); cells.clear(); generation = 0; updateCounter(); renderConway(); });
         reseedBtn.addEventListener('click', () => { stopConway(); seedConway(); });
 
-        canvas.addEventListener('click', (e) => {
+        function getGridCellFromPointer(e) {
             const rect = canvas.getBoundingClientRect();
             const gx = Math.floor((e.clientX - rect.left) / CELL);
             const gy = Math.floor((e.clientY - rect.top) / CELL);
-            const key = cellKey(gx, gy);
-            if (cells.has(key)) cells.delete(key); else cells.add(key);
+            const cols = Math.floor(canvas.width / CELL);
+            const rows = Math.floor(canvas.height / CELL);
+            if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) return null;
+            return { gx, gy, key: cellKey(gx, gy) };
+        }
+
+        let painting = false;
+        let paintMode = 'add';
+
+        canvas.addEventListener('pointerdown', (e) => {
+            const cell = getGridCellFromPointer(e);
+            if (!cell) return;
+            painting = true;
+            paintMode = cells.has(cell.key) ? 'remove' : 'add';
+            if (paintMode === 'add') cells.add(cell.key); else cells.delete(cell.key);
             updateCounter();
             renderConway();
+            canvas.setPointerCapture(e.pointerId);
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (!painting) return;
+            const cell = getGridCellFromPointer(e);
+            if (!cell) return;
+            if (paintMode === 'add') cells.add(cell.key); else cells.delete(cell.key);
+            updateCounter();
+            renderConway();
+        });
+
+        canvas.addEventListener('pointerup', (e) => {
+            painting = false;
+            if (canvas.hasPointerCapture(e.pointerId)) {
+                canvas.releasePointerCapture(e.pointerId);
+            }
+        });
+
+        canvas.addEventListener('pointercancel', () => {
+            painting = false;
         });
 
         initConwaySize();
