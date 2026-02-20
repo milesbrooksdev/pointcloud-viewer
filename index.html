@@ -679,6 +679,16 @@
         let storyStage = 0;
         let storyTimer = null;
 
+        const BLINKER = [[0,0],[1,0],[2,0]];
+        const TOAD = [[1,0],[2,0],[3,0],[0,1],[1,1],[2,1]];
+        const GLIDER = [[1,0],[2,1],[0,2],[1,2],[2,2]];
+        const GOSPER_GUN = [
+            [24,0],[22,1],[24,1],[12,2],[13,2],[20,2],[21,2],[34,2],[35,2],
+            [11,3],[15,3],[20,3],[21,3],[34,3],[35,3],[0,4],[1,4],[10,4],[16,4],[20,4],[21,4],
+            [0,5],[1,5],[10,5],[14,5],[16,5],[17,5],[22,5],[24,5],[10,6],[16,6],[24,6],
+            [11,7],[15,7],[12,8],[13,8]
+        ];
+
         function resetStoryButton() {
             storyStage = 0;
             storyBtn.textContent = '✦ Story';
@@ -710,9 +720,7 @@
                     for (let gy = 0; gy < glyph.length; gy++) {
                         const row = glyph[gy];
                         for (let gx = 0; gx < row.length; gx++) {
-                            if (row[gx] === '1') {
-                                list.push({ x: startCol + xOffset + gx, y: startRow + lineIdx * 9 + gy });
-                            }
+                            if (row[gx] === '1') list.push({ x: startCol + xOffset + gx, y: startRow + lineIdx * 9 + gy });
                         }
                     }
                     xOffset += 6;
@@ -723,6 +731,10 @@
             return list;
         }
 
+        function patternToCellList(pattern, offsetX, offsetY) {
+            return pattern.map(([x, y]) => ({ x: x + offsetX, y: y + offsetY }));
+        }
+
         function animateStoryCells(cellList) {
             if (storyTimer) {
                 clearTimeout(storyTimer);
@@ -731,20 +743,24 @@
 
             let i = 0;
             const drawNext = () => {
-                const burst = 10;
+                const burst = 14;
                 for (let n = 0; n < burst && i < cellList.length; n++, i++) {
                     const { x, y } = cellList[i];
                     cells.add(cellKey(x, y));
                 }
                 updateCounter();
                 renderConway();
-                if (i < cellList.length) storyTimer = setTimeout(drawNext, 18);
+                if (i < cellList.length) storyTimer = setTimeout(drawNext, 16);
             };
             drawNext();
         }
 
         function runStoryStage() {
+            stopConway();
             const cols = Math.max(1, Math.floor(canvas.width / CELL));
+            const rows = Math.max(1, Math.floor(canvas.height / CELL));
+            const menuReserveCols = 24;
+            const storyWidth = Math.max(20, cols - menuReserveCols);
 
             // Each story step starts from a clean board.
             cells.clear();
@@ -752,30 +768,39 @@
             updateCounter();
             renderConway();
 
+            if (storyStage > 7) storyStage = 0;
+
+            let cellList = [];
+
             if (storyStage === 0) {
-                // Keep first story card concise and away from the bottom-right menu area.
-                const msg = 'Cellular Automata and Conways game of life';
-                const menuReserveCols = 24;
-                const cellsForText = textToCellList(msg, 3, 4, Math.max(20, cols - menuReserveCols));
-                animateStoryCells(cellsForText);
-                storyStage = 1;
-                storyBtn.textContent = '✦ Continue Story';
-                return;
+                cellList = textToCellList('Cellular automata and conways game of life', 3, 4, storyWidth);
+            } else if (storyStage === 1) {
+                cellList = textToCellList('Life runs on four local rules with global effects', 3, 4, storyWidth);
+            } else if (storyStage === 2) {
+                cellList = textToCellList('Less than two neighbors dies two or three lives more than three dies empty with three becomes live', 3, 4, storyWidth);
+            } else if (storyStage === 3) {
+                cellList = textToCellList('Oscillators repeat in cycles', 3, 4, storyWidth);
+                cellList = cellList.concat(patternToCellList(BLINKER, 8, Math.min(rows - 8, 18)));
+                cellList = cellList.concat(patternToCellList(TOAD, 18, Math.min(rows - 8, 18)));
+            } else if (storyStage === 4) {
+                cellList = textToCellList('Gliders travel across the grid and carry information', 3, 4, storyWidth);
+                cellList = cellList.concat(patternToCellList(GLIDER, 8, Math.min(rows - 8, 20)));
+                cellList = cellList.concat(patternToCellList(GLIDER, 18, Math.min(rows - 8, 24)));
+                cellList = cellList.concat(patternToCellList(GLIDER, 30, Math.min(rows - 8, 16)));
+            } else if (storyStage === 5) {
+                cellList = textToCellList('Glider guns emit repeating streams of gliders', 3, 4, storyWidth);
+                cellList = cellList.concat(patternToCellList(GOSPER_GUN, 4, Math.min(rows - 16, 16)));
+            } else if (storyStage === 6) {
+                cellList = textToCellList('These patterns can form logic and memory life is turing complete in principle', 3, 4, storyWidth);
+            } else if (storyStage === 7) {
+                cellList = textToCellList('Simple local rules can produce emergent structure and rich behavior', 3, 4, storyWidth);
             }
 
-            if (storyStage === 1) {
-                const msg = 'Conways game of life is based on four simple rules';
-                const menuReserveCols = 24;
-                const cellsForText = textToCellList(msg, 3, 12, Math.max(20, cols - menuReserveCols));
-                animateStoryCells(cellsForText);
-                storyStage = 2;
-                storyBtn.textContent = '✦ Continue Story';
-                return;
-            }
+            cellList.sort((a, b) => (a.y - b.y) || (a.x - b.x));
+            animateStoryCells(cellList);
 
-            // Loop back to first story card on next click.
-            storyStage = 0;
-            storyBtn.textContent = '✦ Story';
+            storyStage += 1;
+            storyBtn.textContent = storyStage > 7 ? '✦ Restart Story' : '✦ Continue Story';
         }
 
         function initConwaySize() {
