@@ -326,7 +326,7 @@
             background-image:
                 linear-gradient(to right, var(--c-grid-line) 1px, transparent 1px),
                 linear-gradient(to bottom, var(--c-grid-line) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-size: 14px 14px;
             opacity: 0.8;
             pointer-events: none;
             z-index: 1;
@@ -630,7 +630,7 @@
         /* --- Conway implementation themed for C4 palette --- */
         const canvas = document.getElementById('conwayCanvas');
         const ctx = canvas.getContext('2d');
-        const CELL = 20;
+        const CELL = 14;
         const GOL_INTERVAL = 120;
         const cells = new Set();
 
@@ -744,6 +744,13 @@
 
         function runStoryStage() {
             const cols = Math.max(1, Math.floor(canvas.width / CELL));
+
+            // Each story step starts from a clean board.
+            cells.clear();
+            generation = 0;
+            updateCounter();
+            renderConway();
+
             if (storyStage === 0) {
                 const msg = "Cellular Automata and Conways game of life - Chet finds it fascinating and here's why you should too";
                 const cellsForText = textToCellList(msg, 3, 4, cols - 6);
@@ -755,11 +762,16 @@
 
             if (storyStage === 1) {
                 const msg = 'Conways game of life is based on four simple rules';
-                const cellsForText = textToCellList(msg, 3, 24, cols - 6);
+                const cellsForText = textToCellList(msg, 3, 12, cols - 6);
                 animateStoryCells(cellsForText);
                 storyStage = 2;
                 storyBtn.textContent = '✦ Continue Story';
+                return;
             }
+
+            // Loop back to first story card on next click.
+            storyStage = 0;
+            storyBtn.textContent = '✦ Story';
         }
 
         function initConwaySize() {
