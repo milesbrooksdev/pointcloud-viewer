@@ -711,10 +711,10 @@
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
             const material = new THREE.PointsMaterial({
-                size: 0.003,
+                size: 0.00375,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.28
+                opacity: 0.5
             });
 
             const points = new THREE.Points(geometry, material);
