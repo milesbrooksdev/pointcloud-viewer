@@ -200,7 +200,7 @@
             color: var(--c-accent);
             opacity: 0;
             animation: fadeInSlow 3s var(--ease-fluid) forwards 1.2s;
-            text-shadow: 0 0 12px rgba(0, 128, 128, 0.4);
+            text-shadow: none;
             margin-bottom: 3rem;
         }
 
@@ -844,7 +844,7 @@
         threeContainer.appendChild(renderer.domElement);
 
         const scene = new THREE.Scene();
-        scene.background = null;
+        scene.background = new THREE.Color(0xf0f7f9);
 
         const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.001, 200);
         camera.position.set(0, 0, 1);
