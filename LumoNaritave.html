@@ -1,0 +1,428 @@
+<html vid="0"><head vid="1">
+    <meta charset="UTF-8" vid="2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">About | LUMO studios</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" vid="5">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" vid="6">
+    <link href="https://fonts.googleapis.com/css2?family=Italianno&amp;family=Playfair+Display:ital,wght@0,400;0,600;1,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet" vid="7">
+
+    <style vid="8">
+        :root {
+            --c-bg-base: #fdf2e9;
+            --c-bg-overlay: rgba(230, 126, 34, 0.05);
+            --c-text-main: #4a2c2a;
+            --c-text-muted: #8e6d6b;
+            --c-accent: #e67e22;
+            --c-secondary-accent: #ff7f50;
+            --c-golden: #f39c12;
+            
+            --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
+            
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-script: 'Italianno', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none; 
+        }
+
+        body {
+            background-color: var(--c-bg-base);
+            font-family: var(--font-serif);
+            min-height: 100vh;
+            width: 100vw;
+            color: var(--c-text-main);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            border-radius: 20px;
+        }
+
+        
+        .layer-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            z-index: 2;
+            pointer-events: none;
+            mask-image: radial-gradient(circle 300px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
+            -webkit-mask-image: radial-gradient(circle 300px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
+            transition: backdrop-filter 0.3s ease;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            opacity: 0.12;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .ui-layer {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            padding: 4rem 5rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            border-bottom: 1px solid rgba(142, 109, 107, 0.1);
+            padding-bottom: 1.5rem;
+            margin-bottom: 6rem;
+        }
+
+        .brand {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-style: italic;
+            color: var(--c-text-main);
+            text-decoration: none;
+        }
+
+        .nav-text {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--c-text-main);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-text:hover {
+            color: var(--c-accent);
+        }
+
+        
+        .section-header {
+            margin-bottom: 8rem;
+            max-width: 800px;
+            opacity: 0;
+            animation: fadeInSlow 2s var(--ease-fluid) forwards;
+        }
+
+        .title-large {
+            font-size: 5rem;
+            line-height: 1;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .title-script {
+            font-family: var(--font-script);
+            font-size: 4rem;
+            color: var(--c-accent);
+            display: block;
+            margin-top: -1rem;
+        }
+
+        
+        .timeline-container {
+            position: relative;
+            margin: 10rem 0;
+            padding-left: 2rem;
+            border-left: 1px solid rgba(230, 126, 34, 0.2);
+        }
+
+        .timeline-item {
+            margin-bottom: 8rem;
+            position: relative;
+            max-width: 600px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.35rem;
+            top: 0.5rem;
+            width: 10px;
+            height: 10px;
+            background: var(--c-accent);
+            border-radius: 50%;
+        }
+
+        .year {
+            font-family: var(--font-mono);
+            color: var(--c-accent);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .timeline-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+
+        .timeline-desc {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--c-text-muted);
+        }
+
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4rem;
+            margin-top: 4rem;
+        }
+
+        .team-card {
+            position: relative;
+        }
+
+        .team-image-container {
+            aspect-ratio: 4/5;
+            background: #e8ded4;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            filter: grayscale(100%);
+            transition: filter 0.6s var(--ease-fluid);
+        }
+        
+        .team-card:hover .team-image-container {
+            filter: grayscale(0%);
+        }
+
+        .team-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            mix-blend-mode: multiply;
+            opacity: 0.8;
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+            text-transform: uppercase;
+        }
+
+        .team-role {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            letter-spacing: 0.1em;
+        }
+
+        
+        .coords {
+            position: fixed;
+            bottom: 4rem;
+            left: 5rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--c-text-muted);
+            border-left: 1px solid var(--c-golden);
+            padding-left: 1rem;
+            z-index: 11;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            top: 0; left: 0; width: 4px; height: 4px;
+            background-color: var(--c-accent);
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-outline {
+            position: fixed;
+            top: 0; left: 0; width: 40px; height: 40px;
+            border: 1px solid rgba(230, 126, 34, 0.4);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+        }
+
+        @keyframes fadeInSlow {
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--c-accent); border-radius: 2px; }
+
+    </style>
+</head>
+<body vid="9">
+
+    <div class="layer-blur" vid="10"></div>
+    <div class="noise-overlay" vid="11"></div>
+
+    <div class="ui-layer" vid="12">
+        
+        <header class="header-top" vid="13">
+            <a href="/" class="brand" vid="14">LUMO studios</a>
+            <nav style="display: flex; gap: 3rem;" vid="15">
+                <a href="#" class="nav-text" vid="16">Projects</a>
+                <a href="#" class="nav-text" vid="17" style="color: var(--c-accent);">About</a>
+                <a href="#" class="nav-text" vid="18">Capabilities</a>
+            </nav>
+        </header>
+
+        <section class="section-header" vid="19">
+            <h1 class="title-large" vid="20">Crafting light into <span class="title-script" vid="21">Narrative</span></h1>
+            <p class="timeline-desc" style="font-size: 1.4rem; max-width: 600px;" vid="22">We are a collective of digital alchemists, dedicated to the intersection of code, light, and motion.</p>
+        </section>
+
+        <section class="timeline-container" vid="23">
+            <div class="timeline-item" vid="24">
+                <span class="year" vid="25">2020 — ORIGIN</span>
+                <h2 class="timeline-title" vid="26">The Spark</h2>
+                <p class="timeline-desc" vid="27">Lumo was founded in a small studio in Lyon, born from a desire to bridge the gap between high-end fashion photography and generative digital art.</p>
+            </div>
+
+            <div class="timeline-item" vid="28">
+                <span class="year" vid="29">2022 — EXPANSION</span>
+                <h2 class="timeline-title" vid="30">Digital Fluidity</h2>
+                <p class="timeline-desc" vid="31">Our first major collaboration with global luxury houses allowed us to pioneer the "Organic Motion" framework, blending real-world physics with surrealist aesthetics.</p>
+            </div>
+
+            <div class="timeline-item" style="margin-bottom: 4rem;" vid="32">
+                <span class="year" vid="33">2024 — TODAY</span>
+                <h2 class="timeline-title" vid="34">Future Casting</h2>
+                <p class="timeline-desc" vid="35">Relocating to Studio Blanc, we've expanded our capabilities into real-time interactive installations and neural-generated spatial environments.</p>
+            </div>
+        </section>
+
+        <section style="margin: 10rem 0;" vid="36">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem;" vid="37">
+                <h2 class="title-large" style="font-size: 3rem; margin-bottom: 0;" vid="38">The Collective</h2>
+                <span class="nav-text" vid="39">Core Members</span>
+            </div>
+            
+            <div class="team-grid" vid="40">
+                <div class="team-card" vid="41">
+                    <div class="team-image-container" vid="42">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&amp;w=600&amp;auto=format&amp;fit=crop" alt="Founder" vid="43">
+                    </div>
+                    <h3 class="team-name" vid="44">Marcus Elara</h3>
+                    <p class="team-role" vid="45">Creative Director</p>
+                </div>
+                
+                <div class="team-card" vid="46">
+                    <div class="team-image-container" style="margin-top: 2rem;" vid="47">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&amp;w=600&amp;auto=format&amp;fit=crop" alt="Tech Lead" vid="48">
+                    </div>
+                    <h3 class="team-name" vid="49">Elena Voss</h3>
+                    <p class="team-role" vid="50">Head of Interactive</p>
+                </div>
+
+                <div class="team-card" vid="51">
+                    <div class="team-image-container" style="margin-top: -1rem;" vid="52">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&amp;w=600&amp;auto=format&amp;fit=crop" alt="Artist" vid="53">
+                    </div>
+                    <h3 class="team-name" vid="54">Julian Thorne</h3>
+                    <p class="team-role" vid="55">Lead Motion Artist</p>
+                </div>
+            </div>
+        </section>
+
+        <footer style="margin-top: 8rem; border-top: 1px solid rgba(142, 109, 107, 0.1); padding-top: 4rem; padding-bottom: 4rem;" vid="56">
+            <div style="display: flex; justify-content: center;" vid="57">
+                <a href="#" class="nav-text" style="font-size: 0.9rem; letter-spacing: 0.3em;" vid="58">Work With Us</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <div class="coords" vid="59">
+        LUMO / 45.7640° N, 4.8357° E
+    </div>
+
+    <div class="cursor-dot" vid="60"></div>
+    <div class="cursor-outline" vid="61"></div>
+
+    <script vid="62">
+        const blurLayer = document.querySelector('.layer-blur');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = window.innerWidth / 2;
+        let cursorY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+        });
+
+        function animateCursor() {
+            const ease = 0.12;
+            cursorX += (mouseX - cursorX) * ease;
+            cursorY += (mouseY - cursorY) * ease;
+            cursorOutline.style.left = `${cursorX}px`;
+            cursorOutline.style.top = `${cursorY}px`;
+
+            const xPercent = (cursorX / window.innerWidth) * 100;
+            const yPercent = (cursorY / window.innerHeight) * 100;
+            blurLayer.style.setProperty('--x', `${xPercent}%`);
+            blurLayer.style.setProperty('--y', `${yPercent}%`);
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('.nav-text, .brand, .team-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '70px';
+                cursorOutline.style.height = '70px';
+                cursorOutline.style.borderColor = '#e67e22';
+                cursorOutline.style.background = 'rgba(230, 126, 34, 0.05)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.borderColor = 'rgba(230, 126, 34, 0.4)';
+                cursorOutline.style.background = 'transparent';
+            });
+        });
+
+        
+        window.addEventListener('scroll', () => {
+            const items = document.querySelectorAll('.timeline-item, .team-card');
+            items.forEach(item => {
+                const rect = item.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.8) {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                    item.style.transition = 'all 1s var(--ease-fluid)';
+                }
+            });
+        });
+    </script>
+</body></html>

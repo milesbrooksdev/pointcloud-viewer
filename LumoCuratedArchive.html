@@ -1,0 +1,460 @@
+<html vid="0"><head vid="1">
+    <meta charset="UTF-8" vid="2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">Projects | LUMO studios</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" vid="5">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" vid="6">
+    <link href="https://fonts.googleapis.com/css2?family=Italianno&amp;family=Playfair+Display:ital,wght@0,400;0,600;1,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet" vid="7">
+
+    <style vid="8">
+        :root {
+            --c-bg-base: #fdf2e9;
+            --c-bg-overlay: rgba(230, 126, 34, 0.05);
+            --c-text-main: #4a2c2a;
+            --c-text-muted: #8e6d6b;
+            --c-accent: #e67e22;
+            --c-secondary-accent: #ff7f50;
+            --c-golden: #f39c12;
+            
+            --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
+            
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-script: 'Italianno', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none; 
+        }
+
+        body {
+            background-color: var(--c-bg-base);
+            font-family: var(--font-serif);
+            min-height: 100vh;
+            width: 100vw;
+            color: var(--c-text-main);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            opacity: 0.12;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .nav-text {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 400;
+            color: var(--c-text-main);
+            pointer-events: auto;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .nav-text:hover {
+            color: var(--c-accent);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            border-bottom: 1px solid rgba(142, 109, 107, 0.2);
+            padding-bottom: 1.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .brand {
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-style: italic;
+        }
+
+        .page-header {
+            margin-bottom: 6rem;
+            opacity: 0;
+            animation: fadeInSlow 1.5s var(--ease-fluid) forwards;
+        }
+
+        .page-title {
+            font-size: 6rem;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: fadeInSlow 1.5s var(--ease-fluid) forwards 0.3s;
+        }
+
+        .filter-item {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--c-text-muted);
+            background: none;
+            border: none;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .filter-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--c-accent);
+            transition: width 0.4s var(--ease-fluid);
+        }
+
+        .filter-item:hover, .filter-item.active {
+            color: var(--c-text-main);
+        }
+
+        .filter-item.active::after {
+            width: 100%;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 4rem 2rem;
+            opacity: 0;
+            animation: fadeInSlow 1.5s var(--ease-fluid) forwards 0.6s;
+        }
+
+        .project-card {
+            grid-column: span 6;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .project-card:nth-child(even) {
+            margin-top: 6rem;
+        }
+
+        .project-image-wrapper {
+            aspect-ratio: 4/5;
+            background: #eee;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 1.5rem;
+            background-color: rgba(230, 126, 34, 0.1);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.2s var(--ease-fluid), filter 1.2s var(--ease-fluid);
+            filter: grayscale(20%) sepia(10%);
+        }
+
+        .project-card:hover .project-image {
+            transform: scale(1.05);
+            filter: grayscale(0%) sepia(0%);
+        }
+
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 44, 42, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s var(--ease-fluid);
+            backdrop-filter: blur(5px);
+        }
+
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+
+        .view-case-study {
+            color: white;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            padding: 1rem 2rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .project-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+
+        .project-category {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
+        }
+
+        .project-year {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--c-text-muted);
+        }
+
+        .cursor-dot {
+            position: fixed;
+            top: 0; left: 0; width: 4px; height: 4px;
+            background-color: var(--c-accent);
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-outline {
+            position: fixed;
+            top: 0; left: 0; width: 40px; height: 40px;
+            border: 1px solid rgba(230, 126, 34, 0.4);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+            mix-blend-mode: color-burn;
+        }
+        
+        .cursor-outline::before, .cursor-outline::after {
+            content: ''; position: absolute; background: var(--c-accent);
+        }
+        .cursor-outline::before { top: 50%; left: -20%; right: -20%; height: 1px; }
+        .cursor-outline::after { left: 50%; top: -20%; bottom: -20%; width: 1px; }
+
+        @keyframes fadeInSlow {
+            from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        footer {
+            margin-top: 10rem;
+            border-top: 1px solid rgba(142, 109, 107, 0.1);
+            padding: 4rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .footer-logo {
+            font-size: 4rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            font-style: italic;
+            line-height: 0.8;
+            color: rgba(74, 44, 42, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .page-title { font-size: 3rem; }
+            .container { padding: 2rem; }
+            .project-card { grid-column: span 12; margin-top: 0 !important; }
+        }
+    </style>
+</head>
+<body vid="9">
+
+    <div class="noise-overlay" vid="10"></div>
+
+    <div class="container" vid="11">
+        <header class="header-top" vid="12">
+            <a href="index.html" class="nav-text brand" vid="13">LUMO studios</a>
+            <div style="display: flex; gap: 3rem;" vid="14">
+                <a href="#" class="nav-text" style="color: var(--c-accent)" vid="15">Projects</a>
+                <a href="#" class="nav-text" vid="16">Capabilities</a>
+            </div>
+        </header>
+
+        <section class="page-header" vid="17">
+            <h1 class="page-title" vid="18">Curated<br vid="19">Archive</h1>
+            <div class="filter-bar" vid="20">
+                <button class="filter-item active" vid="21">All Work</button>
+                <button class="filter-item" vid="22">Production</button>
+                <button class="filter-item" vid="23">CGI &amp; 3D</button>
+                <button class="filter-item" vid="24">Motion</button>
+                <button class="filter-item" vid="25">Digital Arts</button>
+            </div>
+        </section>
+
+        <div class="projects-grid" vid="26">
+            <a href="#" class="project-card" vid="27">
+                <div class="project-image-wrapper" vid="28">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Kinetic Forms" class="project-image" vid="29">
+                    <div class="project-overlay" vid="30">
+                        <span class="view-case-study" vid="31">View Project</span>
+                    </div>
+                </div>
+                <div class="project-info" vid="32">
+                    <div vid="33">
+                        <h2 class="project-title" vid="34">Kinetic Forms</h2>
+                        <p class="project-category" vid="35">3D Motion / CGI</p>
+                    </div>
+                    <span class="project-year" vid="36">2024</span>
+                </div>
+            </a>
+
+            <a href="#" class="project-card" vid="37">
+                <div class="project-image-wrapper" vid="38">
+                    <img src="https://images.unsplash.com/photo-1633167606207-d840b5070fc2?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Ethereal Light" class="project-image" vid="39">
+                    <div class="project-overlay" vid="40">
+                        <span class="view-case-study" vid="41">View Project</span>
+                    </div>
+                </div>
+                <div class="project-info" vid="42">
+                    <div vid="43">
+                        <h2 class="project-title" vid="44">Ethereal Light</h2>
+                        <p class="project-category" vid="45">Photography / Film</p>
+                    </div>
+                    <span class="project-year" vid="46">2023</span>
+                </div>
+            </a>
+
+            <a href="#" class="project-card" vid="47">
+                <div class="project-image-wrapper" vid="48">
+                    <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Monolith Series" class="project-image" vid="49">
+                    <div class="project-overlay" vid="50">
+                        <span class="view-case-study" vid="51">View Project</span>
+                    </div>
+                </div>
+                <div class="project-info" vid="52">
+                    <div vid="53">
+                        <h2 class="project-title" vid="54">Monolith Series</h2>
+                        <p class="project-category" vid="55">Digital Installation</p>
+                    </div>
+                    <span class="project-year" vid="56">2023</span>
+                </div>
+            </a>
+
+            <a href="#" class="project-card" vid="57">
+                <div class="project-image-wrapper" vid="58">
+                    <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Chroma Shift" class="project-image" vid="59">
+                    <div class="project-overlay" vid="60">
+                        <span class="view-case-study" vid="61">View Project</span>
+                    </div>
+                </div>
+                <div class="project-info" vid="62">
+                    <div vid="63">
+                        <h2 class="project-title" vid="64">Chroma Shift</h2>
+                        <p class="project-category" vid="65">Experiential / AR</p>
+                    </div>
+                    <span class="project-year" vid="66">2024</span>
+                </div>
+            </a>
+        </div>
+
+        <footer vid="67">
+            <div class="footer-logo" vid="68">LUMO</div>
+            <div class="nav-text" style="opacity: 0.5" vid="69">
+                © 2024 LUMO Studios. All rights reserved.
+            </div>
+        </footer>
+    </div>
+
+    <div class="cursor-dot" vid="70"></div>
+    <div class="cursor-outline" vid="71"></div>
+
+    <script vid="72">
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = window.innerWidth / 2;
+        let cursorY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+        });
+
+        function animateCursor() {
+            const ease = 0.15;
+            cursorX += (mouseX - cursorX) * ease;
+            cursorY += (mouseY - cursorY) * ease;
+            cursorOutline.style.left = `${cursorX}px`;
+            cursorOutline.style.top = `${cursorY}px`;
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, button, .project-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '70px';
+                cursorOutline.style.height = '70px';
+                cursorOutline.style.borderColor = '#e67e22';
+                cursorOutline.style.backgroundColor = 'rgba(230, 126, 34, 0.05)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.borderColor = 'rgba(230, 126, 34, 0.4)';
+                cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        
+        const filters = document.querySelectorAll('.filter-item');
+        filters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                filters.forEach(f => f.classList.remove('active'));
+                filter.classList.add('active');
+            });
+        });
+    </script>
+</body></html>

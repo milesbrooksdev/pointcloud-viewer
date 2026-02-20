@@ -1,0 +1,377 @@
+<html vid="0"><head vid="1">
+    <meta charset="UTF-8" vid="2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">LUMO studios | Loading Experience</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" vid="5">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" vid="6">
+    <link href="https://fonts.googleapis.com/css2?family=Italianno&amp;family=Playfair+Display:ital,wght@0,400;0,600;1,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet" vid="7">
+
+    <style vid="8">
+        :root {
+            --c-bg-base: #fdf2e9;
+            --c-bg-overlay: rgba(230, 126, 34, 0.05);
+            --c-text-main: #4a2c2a;
+            --c-text-muted: #8e6d6b;
+            --c-accent: #e67e22;
+            --c-secondary-accent: #ff7f50;
+            --c-golden: #f39c12;
+            --c-skeleton: #f3e5d8;
+            
+            --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
+            
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-script: 'Italianno', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none; 
+        }
+
+        body {
+            background-color: var(--c-bg-base);
+            font-family: var(--font-serif);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            color: var(--c-text-main);
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+        }
+
+        
+        .loading-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .skeleton-sphere {
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--c-skeleton) 0%, transparent 70%);
+            border: 1px dashed rgba(230, 126, 34, 0.15);
+            animation: pulse-sphere 4s ease-in-out infinite;
+            position: relative;
+        }
+
+        .skeleton-sphere::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -10%;
+            width: 120%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(230, 126, 34, 0.2), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes pulse-sphere {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.05); opacity: 0.6; }
+        }
+
+        @keyframes scanline {
+            0% { top: 0%; opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            opacity: 0.15;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            filter: contrast(120%);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .ui-layer {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 4rem 5rem;
+            pointer-events: none; 
+        }
+
+        .nav-text {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 400;
+            color: var(--c-text-main);
+            pointer-events: auto;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            border-bottom: 1px solid rgba(142, 109, 107, 0.2);
+            padding-bottom: 1.5rem;
+        }
+
+        .brand {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-style: italic;
+        }
+
+        .hero-text {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .prompt-main {
+            font-size: 7rem;
+            line-height: 0.85;
+            font-weight: 400;
+            letter-spacing: -0.03em;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .prompt-sub {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--c-accent);
+            margin-bottom: 3rem;
+        }
+
+        
+        .cta-container {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        .skeleton-btn {
+            width: 180px;
+            height: 52px;
+            background: var(--c-skeleton);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-btn::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            animation: loading-shimmer 2s infinite;
+        }
+
+        @keyframes loading-shimmer {
+            100% { transform: translateX(100%); }
+        }
+
+        .coords {
+            position: absolute;
+            bottom: 4rem;
+            left: 5rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            color: var(--c-text-muted);
+            border-left: 1px solid var(--c-golden);
+            padding-left: 1rem;
+            line-height: 1.4;
+        }
+        
+        .coords::before {
+            content: '||| || | |||';
+            display: block;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            color: var(--c-accent);
+            opacity: 0.8;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .loader-status {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--c-accent);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .loading-bar {
+            width: 100px;
+            height: 1px;
+            background: rgba(230, 126, 34, 0.2);
+            position: relative;
+        }
+
+        .loading-bar-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 35%;
+            background: var(--c-accent);
+            animation: progress-dummy 5s ease-in-out infinite;
+        }
+
+        @keyframes progress-dummy {
+            0% { width: 10%; }
+            50% { width: 65%; }
+            100% { width: 85%; }
+        }
+
+        .cursor-dot {
+            position: fixed;
+            top: 0; left: 0; width: 4px; height: 4px;
+            background-color: var(--c-accent);
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-outline {
+            position: fixed;
+            top: 0; left: 0; width: 40px; height: 40px;
+            border: 1px solid rgba(230, 126, 34, 0.4);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+        }
+
+        @media (max-width: 768px) {
+            .prompt-main { font-size: 3.5rem; }
+            .ui-layer { padding: 2rem; }
+            .coords, .loader-status { display: none; }
+        }
+    </style>
+</head>
+<body vid="9">
+
+    <div class="loading-backdrop" vid="10">
+        <div class="skeleton-sphere" vid="11"></div>
+    </div>
+
+    <div class="noise-overlay" vid="12"></div>
+
+    <div class="ui-layer" vid="13">
+        
+        <header class="header-top" vid="14">
+            <a href="#" class="nav-text brand" vid="15">LUMO studios</a>
+            <div style="display: flex; gap: 3rem;" vid="16">
+                <a href="#" class="nav-text" vid="17">Projects</a>
+                <a href="#" class="nav-text" vid="18">Capabilities</a>
+            </div>
+        </header>
+
+        <main class="hero-text" vid="19">
+            <h1 class="prompt-main" vid="20" style="opacity: 0.4;">Creative<br vid="21">Production</h1>
+            <p class="prompt-sub" vid="22">System Initializing...</p>
+            
+            <div class="cta-container" vid="23">
+                <div class="skeleton-btn" vid="24"></div>
+                <div class="skeleton-btn" vid="25"></div>
+            </div>
+        </main>
+
+        <div class="coords" vid="26">
+            FETCHING ASSETS / CACHE_LOAD_01
+        </div>
+
+        <div class="loader-status" vid="27">
+            <span vid="28">Syncing Vertex Data</span>
+            <div class="loading-bar" vid="29">
+                <div class="loading-bar-fill" vid="30"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="cursor-dot" vid="31"></div>
+    <div class="cursor-outline" vid="32"></div>
+
+    <script vid="33">
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = window.innerWidth / 2;
+        let cursorY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+        });
+
+        function animateCursor() {
+            const ease = 0.1;
+            cursorX += (mouseX - cursorX) * ease;
+            cursorY += (mouseY - cursorY) * ease;
+            cursorOutline.style.left = `${cursorX}px`;
+            cursorOutline.style.top = `${cursorY}px`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('.nav-text, .skeleton-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.borderColor = '#e67e22';
+            });
+            btn.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.borderColor = 'rgba(230, 126, 34, 0.4)';
+            });
+        });
+    </script>
+</body></html>
