@@ -418,6 +418,297 @@
             60% { transform: translate(-50%, 5px); }
         }
 
+        /* -------- Story Overlay Panel -------- */
+        .story-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 400ms var(--ease-fluid);
+        }
+
+        .story-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .story-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 25, 47, 0.35);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .story-card {
+            position: relative;
+            z-index: 2;
+            width: min(820px, 90vw);
+            max-height: 88vh;
+            background: rgba(240, 247, 249, 0.97);
+            border: 1px solid rgba(0, 128, 128, 0.25);
+            box-shadow: 0 8px 60px rgba(10, 25, 47, 0.25), 0 0 0 1px rgba(0, 206, 209, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(20px) scale(0.98);
+            transition: transform 400ms var(--ease-fluid);
+        }
+
+        .story-overlay.active .story-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .story-card-inner {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex: 1;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,128,128,0.2) transparent;
+        }
+
+        .story-header {
+            padding: 2rem 2.5rem 1.2rem;
+            border-bottom: 1px solid rgba(10, 25, 47, 0.08);
+            flex-shrink: 0;
+        }
+
+        .story-chapter {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            margin-bottom: 0.6rem;
+            opacity: 0.8;
+        }
+
+        .story-title {
+            font-family: var(--font-serif);
+            font-size: 1.9rem;
+            font-weight: 600;
+            line-height: 1.15;
+            color: var(--c-text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .story-body {
+            padding: 1.5rem 2.5rem;
+            flex: 1;
+        }
+
+        .story-text {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            line-height: 1.75;
+            color: rgba(10, 25, 47, 0.8);
+            margin-bottom: 1.2rem;
+        }
+
+        .story-text:last-child { margin-bottom: 0; }
+
+        .story-demo-wrap {
+            margin: 1.2rem 0;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .story-demo {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .story-demo-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .mini-gol {
+            border: 1px solid rgba(0, 128, 128, 0.2);
+            background: rgba(240, 247, 249, 0.6);
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        .story-rule-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .story-rule-item {
+            border: 1px solid rgba(0, 128, 128, 0.15);
+            padding: 1rem;
+            position: relative;
+            background: rgba(0, 128, 128, 0.03);
+        }
+
+        .story-rule-num {
+            font-family: var(--font-script);
+            font-size: 2.4rem;
+            color: rgba(0, 128, 128, 0.15);
+            position: absolute;
+            top: 0.5rem;
+            right: 0.8rem;
+            line-height: 1;
+        }
+
+        .story-rule-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--c-accent);
+            margin-bottom: 0.4rem;
+        }
+
+        .story-rule-text {
+            font-family: var(--font-serif);
+            font-size: 0.88rem;
+            line-height: 1.55;
+            color: rgba(10, 25, 47, 0.75);
+        }
+
+        .story-footer {
+            padding: 1.2rem 2.5rem;
+            border-top: 1px solid rgba(10, 25, 47, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .story-progress {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            color: var(--c-text-muted);
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .story-pip {
+            width: 5px;
+            height: 5px;
+            background: rgba(0, 128, 128, 0.2);
+            transition: background 0.3s;
+        }
+
+        .story-pip.active {
+            background: var(--c-accent);
+        }
+
+        .story-nav {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .story-btn-back {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.65rem 1.2rem;
+            border: 1px solid rgba(10, 25, 47, 0.15);
+            background: transparent;
+            color: var(--c-text-muted);
+            transition: all 0.3s;
+        }
+
+        .story-btn-back:hover {
+            border-color: var(--c-accent);
+            color: var(--c-accent);
+        }
+
+        .story-btn-back:disabled {
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        .story-btn-close {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(10, 25, 47, 0.15);
+            background: transparent;
+            color: var(--c-text-muted);
+            transition: all 0.3s;
+        }
+
+        .story-btn-close:hover {
+            border-color: var(--c-accent);
+            color: var(--c-accent);
+        }
+
+        .story-btn-next {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.65rem 1.6rem;
+            border: none;
+            background: var(--c-accent);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .story-btn-next:hover {
+            background: var(--c-secondary-accent);
+            box-shadow: 0 0 20px rgba(0,128,128,0.35);
+        }
+
+        .story-shapes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .story-shape-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .story-shape-label {
+            font-family: var(--font-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--c-text-muted);
+            text-align: center;
+        }
+
+        .story-highlight {
+            font-style: italic;
+            color: var(--c-accent);
+        }
+
+        .story-divider {
+            border: none;
+            border-top: 1px solid rgba(0,128,128,0.12);
+            margin: 1rem 0;
+        }
+
         .cursor-dot {
             position: fixed;
             top: 0; left: 0; width: 4px; height: 4px;
@@ -506,12 +797,34 @@
             <div class="conway-title">Conway's Game of Life // Hidden Studio Layer</div>
 
             <div class="conway-panel">
-                <button id="golRunBtn">▶ Run [GOL]</button>
-                <button id="golStepBtn">→ Step</button>
-                <button id="golClearBtn">✕ Clear</button>
-                <button id="golReseedBtn">↺ Reseed</button>
-                <button id="golStoryBtn">✦ Story</button>
+                <button id="golRunBtn">&#9654; Run [GOL]</button>
+                <button id="golStepBtn">&#8594; Step</button>
+                <button id="golClearBtn">&#10005; Clear</button>
+                <button id="golReseedBtn">&#8635; Reseed</button>
+                <button id="golStoryBtn">&#10022; Story</button>
                 <div class="counter" id="golCounter">GEN: 0 | CELLS: 0</div>
+            </div>
+
+            <!-- Story Overlay -->
+            <div class="story-overlay" id="storyOverlay">
+                <div class="story-backdrop" id="storyBackdrop"></div>
+                <div class="story-card">
+                    <div class="story-card-inner" id="storyCardInner">
+                        <div class="story-header">
+                            <div class="story-chapter" id="storyChapter">Chapter I</div>
+                            <div class="story-title" id="storyTitle">Title</div>
+                        </div>
+                        <div class="story-body" id="storyBody"></div>
+                    </div>
+                    <div class="story-footer">
+                        <div class="story-progress" id="storyProgress"></div>
+                        <div class="story-nav">
+                            <button class="story-btn-close" id="storyCloseBtn">&#10005; Close</button>
+                            <button class="story-btn-back" id="storyBackBtn">&#8249; Back</button>
+                            <button class="story-btn-next" id="storyNextBtn">Continue &#8250;</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -649,6 +962,9 @@
         function cellKey(x, y) { return `${x},${y}`; }
         function parseKey(key) { const [x, y] = key.split(','); return [+x, +y]; }
 
+        // =====================================================================
+        // PIXEL FONT — for slide 0 canvas text
+        // =====================================================================
         const FONT_5x7 = {
             'A':['01110','10001','10001','11111','10001','10001','10001'],
             'B':['11110','10001','10001','11110','10001','10001','11110'],
@@ -659,40 +975,27 @@
             'G':['01110','10001','10000','10111','10001','10001','01111'],
             'H':['10001','10001','10001','11111','10001','10001','10001'],
             'I':['11111','00100','00100','00100','00100','00100','11111'],
+            'J':['00111','00010','00010','00010','10010','10010','01100'],
+            'K':['10001','10010','10100','11000','10100','10010','10001'],
             'L':['10000','10000','10000','10000','10000','10000','11111'],
             'M':['10001','11011','10101','10101','10001','10001','10001'],
             'N':['10001','11001','10101','10011','10001','10001','10001'],
             'O':['01110','10001','10001','10001','10001','10001','01110'],
             'P':['11110','10001','10001','11110','10000','10000','10000'],
+            'Q':['01110','10001','10001','10001','10101','10010','01101'],
             'R':['11110','10001','10001','11110','10100','10010','10001'],
             'S':['01111','10000','10000','01110','00001','00001','11110'],
             'T':['11111','00100','00100','00100','00100','00100','00100'],
             'U':['10001','10001','10001','10001','10001','10001','01110'],
             'V':['10001','10001','10001','10001','10001','01010','00100'],
             'W':['10001','10001','10001','10101','10101','11011','10001'],
+            'X':['10001','10001','01010','00100','01010','10001','10001'],
             'Y':['10001','10001','01010','00100','00100','00100','00100'],
+            'Z':['11111','00001','00010','00100','01000','10000','11111'],
             '-':['00000','00000','00000','11111','00000','00000','00000'],
             "'":['00100','00100','00100','00000','00000','00000','00000'],
             ' ':['00000','00000','00000','00000','00000','00000','00000']
         };
-
-        let storyStage = 0;
-        let storyTimer = null;
-
-        const BLINKER = [[0,0],[1,0],[2,0]];
-        const TOAD = [[1,0],[2,0],[3,0],[0,1],[1,1],[2,1]];
-        const GLIDER = [[1,0],[2,1],[0,2],[1,2],[2,2]];
-        const GOSPER_GUN = [
-            [24,0],[22,1],[24,1],[12,2],[13,2],[20,2],[21,2],[34,2],[35,2],
-            [11,3],[15,3],[20,3],[21,3],[34,3],[35,3],[0,4],[1,4],[10,4],[16,4],[20,4],[21,4],
-            [0,5],[1,5],[10,5],[14,5],[16,5],[17,5],[22,5],[24,5],[10,6],[16,6],[24,6],
-            [11,7],[15,7],[12,8],[13,8]
-        ];
-
-        function resetStoryButton() {
-            storyStage = 0;
-            storyBtn.textContent = '✦ Story';
-        }
 
         function textToCellList(text, startCol, startRow, maxCols) {
             const words = text.toUpperCase().split(/\s+/);
@@ -700,17 +1003,12 @@
             let line = '';
             const approxCharCols = 6;
             const maxChars = Math.max(8, Math.floor(maxCols / approxCharCols));
-
             for (const w of words) {
                 const candidate = line ? `${line} ${w}` : w;
                 if (candidate.length <= maxChars) line = candidate;
-                else {
-                    if (line) lines.push(line);
-                    line = w;
-                }
+                else { if (line) lines.push(line); line = w; }
             }
             if (line) lines.push(line);
-
             const list = [];
             lines.forEach((ln, lineIdx) => {
                 let xOffset = 0;
@@ -718,89 +1016,456 @@
                     const ch = FONT_5x7[chRaw] ? chRaw : ' ';
                     const glyph = FONT_5x7[ch];
                     for (let gy = 0; gy < glyph.length; gy++) {
-                        const row = glyph[gy];
-                        for (let gx = 0; gx < row.length; gx++) {
-                            if (row[gx] === '1') list.push({ x: startCol + xOffset + gx, y: startRow + lineIdx * 9 + gy });
+                        for (let gx = 0; gx < glyph[gy].length; gx++) {
+                            if (glyph[gy][gx] === '1') list.push({ x: startCol + xOffset + gx, y: startRow + lineIdx * 9 + gy });
                         }
                     }
                     xOffset += 6;
                 }
             });
-
             list.sort((a, b) => (a.y - b.y) || (a.x - b.x));
             return list;
         }
 
-        function patternToCellList(pattern, offsetX, offsetY) {
-            return pattern.map(([x, y]) => ({ x: x + offsetX, y: y + offsetY }));
-        }
-
+        let storyTimer = null;
         function animateStoryCells(cellList) {
-            if (storyTimer) {
-                clearTimeout(storyTimer);
-                storyTimer = null;
-            }
-
+            if (storyTimer) { clearTimeout(storyTimer); storyTimer = null; }
             let i = 0;
             const drawNext = () => {
-                const burst = 14;
-                for (let n = 0; n < burst && i < cellList.length; n++, i++) {
-                    const { x, y } = cellList[i];
-                    cells.add(cellKey(x, y));
-                }
-                updateCounter();
-                renderConway();
-                if (i < cellList.length) storyTimer = setTimeout(drawNext, 16);
+                for (let n = 0; n < 10 && i < cellList.length; n++, i++) cells.add(cellKey(cellList[i].x, cellList[i].y));
+                updateCounter(); renderConway();
+                if (i < cellList.length) storyTimer = setTimeout(drawNext, 18);
             };
             drawNext();
         }
 
-        function runStoryStage() {
-            stopConway();
-            const cols = Math.max(1, Math.floor(canvas.width / CELL));
-            const rows = Math.max(1, Math.floor(canvas.height / CELL));
-            const menuReserveCols = 24;
-            const storyWidth = Math.max(20, cols - menuReserveCols);
+        // =====================================================================
+        // STORY SYSTEM — slide 0 draws on canvas, slides 1+ use overlay
+        // =====================================================================
+        const storyOverlay = document.getElementById('storyOverlay');
+        const storyChapterEl = document.getElementById('storyChapter');
+        const storyTitleEl = document.getElementById('storyTitle');
+        const storyBodyEl = document.getElementById('storyBody');
+        const storyProgressEl = document.getElementById('storyProgress');
+        const storyNextBtn = document.getElementById('storyNextBtn');
+        const storyBackBtn = document.getElementById('storyBackBtn');
+        const storyCloseBtn = document.getElementById('storyCloseBtn');
+        const storyBackdrop = document.getElementById('storyBackdrop');
 
-            // Each story step starts from a clean board.
-            cells.clear();
-            generation = 0;
-            updateCounter();
-            renderConway();
+        // Overlay slides start at index 1 of the story (index 0 is canvas text)
+        let currentStorySlide = -1; // -1 = not started, 0 = canvas slide done, 1+ = overlay
+        let miniGolIntervals = [];
 
-            if (storyStage > 7) storyStage = 0;
+        // ------ Mini GoL engine — canvas must be in DOM before calling ------
+        function miniGolInit(canvasEl, cellSize, pattern, speed) {
+            const w = canvasEl.width;
+            const h = canvasEl.height;
+            const ctx2 = canvasEl.getContext('2d');
+            const cols = Math.floor(w / cellSize);
+            const rows = Math.floor(h / cellSize);
+            let alive = new Set();
 
-            let cellList = [];
+            const patRows = pattern.length;
+            const patCols = Math.max(...pattern.map(r => r.length));
+            const ox = Math.floor((cols - patCols) / 2);
+            const oy = Math.floor((rows - patRows) / 2);
+            for (let r = 0; r < patRows; r++)
+                for (let c = 0; c < pattern[r].length; c++)
+                    if (pattern[r][c]) alive.add(`${ox+c},${oy+r}`);
 
-            if (storyStage === 0) {
-                cellList = textToCellList('Cellular automata and conways game of life', 3, 4, storyWidth);
-            } else if (storyStage === 1) {
-                cellList = textToCellList('Life runs on four local rules with global effects', 3, 4, storyWidth);
-            } else if (storyStage === 2) {
-                cellList = textToCellList('Less than two neighbors dies two or three lives more than three dies empty with three becomes live', 3, 4, storyWidth);
-            } else if (storyStage === 3) {
-                cellList = textToCellList('Oscillators repeat in cycles', 3, 4, storyWidth);
-                cellList = cellList.concat(patternToCellList(BLINKER, 8, Math.min(rows - 8, 18)));
-                cellList = cellList.concat(patternToCellList(TOAD, 18, Math.min(rows - 8, 18)));
-            } else if (storyStage === 4) {
-                cellList = textToCellList('Gliders travel across the grid and carry information', 3, 4, storyWidth);
-                cellList = cellList.concat(patternToCellList(GLIDER, 8, Math.min(rows - 8, 20)));
-                cellList = cellList.concat(patternToCellList(GLIDER, 18, Math.min(rows - 8, 24)));
-                cellList = cellList.concat(patternToCellList(GLIDER, 30, Math.min(rows - 8, 16)));
-            } else if (storyStage === 5) {
-                cellList = textToCellList('Glider guns emit repeating streams of gliders', 3, 4, storyWidth);
-                cellList = cellList.concat(patternToCellList(GOSPER_GUN, 4, Math.min(rows - 16, 16)));
-            } else if (storyStage === 6) {
-                cellList = textToCellList('These patterns can form logic and memory life is turing complete in principle', 3, 4, storyWidth);
-            } else if (storyStage === 7) {
-                cellList = textToCellList('Simple local rules can produce emergent structure and rich behavior', 3, 4, storyWidth);
+            function draw() {
+                ctx2.clearRect(0, 0, w, h);
+                ctx2.strokeStyle = 'rgba(0,128,128,0.12)';
+                ctx2.lineWidth = 0.5;
+                for (let x = 0; x <= cols; x++) { ctx2.beginPath(); ctx2.moveTo(x*cellSize,0); ctx2.lineTo(x*cellSize,h); ctx2.stroke(); }
+                for (let y = 0; y <= rows; y++) { ctx2.beginPath(); ctx2.moveTo(0,y*cellSize); ctx2.lineTo(w,y*cellSize); ctx2.stroke(); }
+                ctx2.fillStyle = '#008080';
+                for (const k of alive) {
+                    const [x,y] = k.split(',').map(Number);
+                    ctx2.fillRect(x*cellSize+1, y*cellSize+1, cellSize-1.5, cellSize-1.5);
+                }
             }
 
-            cellList.sort((a, b) => (a.y - b.y) || (a.x - b.x));
-            animateStoryCells(cellList);
+            function step() {
+                const nc = new Map();
+                for (const k of alive) {
+                    const [x,y] = k.split(',').map(Number);
+                    for (let dx=-1;dx<=1;dx++) for (let dy=-1;dy<=1;dy++) {
+                        if (dx===0&&dy===0) continue;
+                        const nk=`${x+dx},${y+dy}`; nc.set(nk,(nc.get(nk)||0)+1);
+                    }
+                }
+                const next=new Set();
+                for (const [k,cnt] of nc) if (cnt===3||(cnt===2&&alive.has(k))) next.add(k);
+                alive=next;
+            }
 
-            storyStage += 1;
-            storyBtn.textContent = storyStage > 7 ? '✦ Restart Story' : '✦ Continue Story';
+            draw();
+            const iv = setInterval(()=>{step();draw();}, speed);
+            miniGolIntervals.push(iv);
+        }
+
+        // Build a canvas, append to parent, then init (so it's in DOM)
+        function mkCanvas(parent, w, h, cellSize, pattern, speed) {
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            c.className = 'mini-gol';
+            c.style.width = w+'px'; c.style.height = h+'px';
+            parent.appendChild(c);
+            miniGolInit(c, cellSize, pattern, speed);
+        }
+
+        function stopAllMiniGol() {
+            miniGolIntervals.forEach(iv => clearInterval(iv));
+            miniGolIntervals = [];
+        }
+
+        // ------ Pattern library ------
+        const PATS = {
+            block:   [[1,1],[1,1]],
+            beehive: [[0,1,1,0],[1,0,0,1],[0,1,1,0]],
+            loaf:    [[0,1,1,0],[1,0,0,1],[0,1,0,1],[0,0,1,0]],
+            boat:    [[1,1,0],[1,0,1],[0,1,0]],
+            tub:     [[0,1,0],[1,0,1],[0,1,0]],
+            pond:    [[0,1,1,0],[1,0,0,1],[1,0,0,1],[0,1,1,0]],
+            blinker: [[1,1,1]],
+            toad:    [[0,1,1,1],[1,1,1,0]],
+            beacon:  [[1,1,0,0],[1,0,0,0],[0,0,0,1],[0,0,1,1]],
+            pulsar:  [
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+            ],
+            pentadeca: [[1,1,1],[1,0,1],[1,1,1],[1,1,1],[1,1,1],[1,0,1],[1,1,1],[1,1,1],[1,1,1],[1,0,1]],
+            fig8: [[1,1,1,0,0,0],[1,1,1,0,0,0],[1,1,1,0,0,0],[0,0,0,1,1,1],[0,0,0,1,1,1],[0,0,0,1,1,1]],
+            glider: [[0,1,0],[0,0,1],[1,1,1]],
+            lwss:   [[0,1,0,0,1],[1,0,0,0,0],[1,0,0,0,1],[1,1,1,1,0]],
+            lonely: [[0,0,0,0,0],[0,0,0,0,0],[0,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+            dense:  [[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],
+            birth:  [[0,0,0,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+            glidergun: [
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+                [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+                [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ],
+        };
+
+        // ------ Overlay slides (index 0 here = story slide 1) ------
+        const SLIDES = [
+            // Slide 1 — Four Laws
+            {
+                chapter: 'Chapter I',
+                title: 'Four Laws',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Four rules. That is all. They govern every cell, at every moment, with no exceptions and no memory of the past.</p>`;
+                    const grid = document.createElement('div');
+                    grid.className = 'story-rule-grid';
+                    const rules = [
+                        { n:'I',   title:'Underpopulation', text:'Fewer than 2 neighbors: the cell dies.' },
+                        { n:'II',  title:'Survival',        text:'2 or 3 neighbors: the cell lives on.' },
+                        { n:'III', title:'Overpopulation',  text:'More than 3 neighbors: the cell dies.' },
+                        { n:'IV',  title:'Reproduction',    text:'Exactly 3 neighbors: a dead cell is born.' },
+                    ];
+                    for (const r of rules) {
+                        const item = document.createElement('div');
+                        item.className = 'story-rule-item';
+                        item.innerHTML = `<div class="story-rule-num">${r.n}</div><div class="story-rule-title">${r.title}</div><div class="story-rule-text">${r.text}</div>`;
+                        grid.appendChild(item);
+                    }
+                    body.appendChild(grid);
+                }
+            },
+
+            // Slide 2 — Rules in Motion
+            {
+                chapter: 'Chapter I',
+                title: 'Watch the Rules',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Each grid below obeys the same four laws. The only difference is where it starts.</p>`;
+                    const grid = document.createElement('div');
+                    grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;';
+                    const demos = [
+                        { label: 'I. Underpopulation — a lone cell vanishes', pat: PATS.lonely, spd: 700 },
+                        { label: 'II. Survival — the blinker oscillates forever', pat: PATS.blinker, spd: 280 },
+                        { label: 'III. Overpopulation — a dense mass erodes', pat: PATS.dense, spd: 200 },
+                        { label: 'IV. Reproduction — born from three neighbors', pat: PATS.birth, spd: 350 },
+                    ];
+                    for (const d of demos) {
+                        const wrap = document.createElement('div');
+                        const lbl = document.createElement('div');
+                        lbl.className = 'story-demo-label';
+                        lbl.textContent = d.label;
+                        lbl.style.marginBottom = '0.4rem';
+                        wrap.appendChild(lbl);
+                        mkCanvas(wrap, 188, 130, 13, d.pat, d.spd);
+                        grid.appendChild(wrap);
+                    }
+                    body.appendChild(grid);
+                }
+            },
+
+            // Slide 3 — Still Lifes
+            {
+                chapter: 'Chapter II',
+                title: 'The Still Lifes',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Some patterns find perfect balance — every cell has just enough neighbors to survive, and no dead cell has enough to be born. They never change. These are the atoms of Life.</p>`;
+                    const grid = document.createElement('div');
+                    grid.className = 'story-shapes-grid';
+                    const shapes = [
+                        { label: 'Block',   pat: PATS.block },
+                        { label: 'Beehive', pat: PATS.beehive },
+                        { label: 'Loaf',    pat: PATS.loaf },
+                        { label: 'Boat',    pat: PATS.boat },
+                        { label: 'Tub',     pat: PATS.tub },
+                        { label: 'Pond',    pat: PATS.pond },
+                    ];
+                    for (const s of shapes) {
+                        const item = document.createElement('div');
+                        item.className = 'story-shape-item';
+                        const lbl = document.createElement('div');
+                        lbl.className = 'story-shape-label';
+                        lbl.textContent = s.label;
+                        mkCanvas(item, 120, 100, 14, s.pat, 800);
+                        item.appendChild(lbl);
+                        grid.appendChild(item);
+                    }
+                    body.appendChild(grid);
+                }
+            },
+
+            // Slide 4 — Oscillators
+            {
+                chapter: 'Chapter III',
+                title: 'The Oscillators',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Others pulse. They cycle through a fixed sequence of states, returning to their origin every N generations. The universe has a heartbeat.</p>`;
+                    const wrap = document.createElement('div');
+                    wrap.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;';
+                    const osc = [
+                        { label: 'Blinker  ·  p2',      pat: PATS.blinker,   sz:14, spd:280, w:140, h:100 },
+                        { label: 'Toad  ·  p2',          pat: PATS.toad,      sz:14, spd:300, w:140, h:100 },
+                        { label: 'Beacon  ·  p2',        pat: PATS.beacon,    sz:14, spd:300, w:140, h:100 },
+                        { label: 'Pulsar  ·  p3',        pat: PATS.pulsar,    sz: 9, spd:200, w:140, h:140 },
+                        { label: 'Pentadecathlon  ·  p15',pat:PATS.pentadeca, sz:13, spd:160, w:140, h:140 },
+                        { label: 'Figure Eight  ·  p8',  pat: PATS.fig8,      sz:13, spd:180, w:140, h:110 },
+                    ];
+                    for (const o of osc) {
+                        const item = document.createElement('div');
+                        item.className = 'story-shape-item';
+                        const lbl = document.createElement('div');
+                        lbl.className = 'story-shape-label';
+                        lbl.textContent = o.label;
+                        mkCanvas(item, o.w, o.h, o.sz, o.pat, o.spd);
+                        item.appendChild(lbl);
+                        wrap.appendChild(item);
+                    }
+                    body.appendChild(wrap);
+                }
+            },
+
+            // Slide 5 — Gliders & Spaceships
+            {
+                chapter: 'Chapter IV',
+                title: 'The Wanderers',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Some patterns move. They translate across the grid while maintaining their form — spaceships sailing through an infinite sea. The Glider is perhaps the most famous object in all of mathematics.</p>`;
+                    const demoWrap = document.createElement('div');
+                    demoWrap.className = 'story-demo-wrap';
+
+                    const d1 = document.createElement('div');
+                    d1.className = 'story-demo';
+                    const l1 = document.createElement('div');
+                    l1.className = 'story-demo-label'; l1.textContent = 'Glider — travels diagonally, period 4';
+                    d1.appendChild(l1);
+                    mkCanvas(d1, 220, 180, 14, PATS.glider, 180);
+
+                    const d2 = document.createElement('div');
+                    d2.className = 'story-demo';
+                    const l2 = document.createElement('div');
+                    l2.className = 'story-demo-label'; l2.textContent = 'Lightweight Spaceship — travels horizontally';
+                    d2.appendChild(l2);
+                    mkCanvas(d2, 220, 180, 12, PATS.lwss, 200);
+
+                    demoWrap.appendChild(d1);
+                    demoWrap.appendChild(d2);
+                    body.appendChild(demoWrap);
+                    const p = document.createElement('p');
+                    p.className = 'story-text';
+                    p.style.marginTop = '0.5rem';
+                    p.innerHTML = 'Larger spaceships exist in every direction and at many speeds — from c/2 down to arbitrarily slow.';
+                    body.appendChild(p);
+                }
+            },
+
+            // Slide 6 — Glider Gun
+            {
+                chapter: 'Chapter V',
+                title: 'The Glider Gun',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">In 1970, Conway offered $50 to anyone who could prove a pattern could grow forever. It was claimed in weeks — with the Gosper Glider Gun, which fires a new glider every 30 generations, endlessly.</p>`;
+                    const lbl = document.createElement('div');
+                    lbl.className = 'story-demo-label';
+                    lbl.style.marginBottom = '0.5rem';
+                    lbl.textContent = 'Gosper Glider Gun — fires every 30 generations';
+                    body.appendChild(lbl);
+                    mkCanvas(body, 520, 150, 10, PATS.glidergun, 120);
+                    const p = document.createElement('p');
+                    p.className = 'story-text';
+                    p.style.marginTop = '1rem';
+                    p.innerHTML = 'This proved that patterns in the Game of Life can grow without bound — and hinted at something far more profound.';
+                    body.appendChild(p);
+                }
+            },
+
+            // Slide 7 — Turing Complete
+            {
+                chapter: 'Chapter VI',
+                title: 'A Universe That Thinks',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Gliders as signals. Guns as clocks. Collisions as logic gates. From these, researchers built AND, OR, and NOT gates inside the Game of Life — then a Turing machine — then a universal computer.</p>`;
+                    const box = document.createElement('div');
+                    box.style.cssText = 'border-left:3px solid var(--c-accent);padding:1rem 1.2rem;margin:1rem 0;background:rgba(0,128,128,0.04);';
+                    box.innerHTML = `<div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-accent);margin-bottom:0.4rem;">Turing Complete</div><div style="font-family:var(--font-serif);font-size:0.92rem;line-height:1.6;color:rgba(10,25,47,0.8);">The Game of Life can perform any computation any machine can perform. It has even been used to simulate itself — a Game of Life running inside a Game of Life.</div>`;
+                    body.appendChild(box);
+                    const p = document.createElement('p');
+                    p.className = 'story-text';
+                    p.textContent = 'Four rules. An infinite grid. The computational power of every computer ever built.';
+                    body.appendChild(p);
+                }
+            },
+
+            // Slide 8 — Epilogue
+            {
+                chapter: 'Epilogue',
+                title: 'Simple Rules. Infinite Possibility.',
+                build: (body) => {
+                    body.innerHTML = `<p class="story-text">Cellular automata appear in the pigment of shells, the spread of fire, the growth of cities, the firing of neurons. Complex phenomena emerging from simple rules. This is the nature of emergence.</p>`;
+                    const lbl = document.createElement('div');
+                    lbl.className = 'story-demo-label';
+                    lbl.style.marginBottom = '0.5rem';
+                    lbl.textContent = 'From the same four rules — a new universe begins';
+                    body.appendChild(lbl);
+                    const randPat = [];
+                    for (let r=0;r<16;r++){const row=[];for(let c=0;c<44;c++)row.push(Math.random()>0.62?1:0);randPat.push(row);}
+                    mkCanvas(body, 490, 170, 11, randPat, 120);
+                    const p = document.createElement('p');
+                    p.className = 'story-text';
+                    p.style.marginTop = '1rem';
+                    p.innerHTML = 'The canvas behind this card is yours. Draw something. Run it. <em class="story-highlight">See what emerges.</em>';
+                    body.appendChild(p);
+                }
+            },
+        ];
+
+        // ------ Progress pips ------
+        function renderProgress(overlayIdx) {
+            storyProgressEl.innerHTML = '';
+            // total = 1 canvas slide + SLIDES.length overlay slides
+            const total = 1 + SLIDES.length;
+            const current = overlayIdx + 1; // 0-based: canvas=0, overlay[0]=1, etc.
+            for (let i = 0; i < total; i++) {
+                const pip = document.createElement('div');
+                pip.className = 'story-pip' + (i === current ? ' active' : '');
+                storyProgressEl.appendChild(pip);
+            }
+        }
+
+        // ------ Render an overlay slide ------
+        function renderSlide(idx) {
+            stopAllMiniGol();
+            const slide = SLIDES[idx];
+            storyChapterEl.textContent = slide.chapter;
+            storyTitleEl.textContent = slide.title;
+            storyBodyEl.innerHTML = '';
+            slide.build(storyBodyEl);
+            document.getElementById('storyCardInner').scrollTop = 0;
+            renderProgress(idx);
+            const isLast = idx === SLIDES.length - 1;
+            storyNextBtn.textContent = isLast ? 'Begin Again ↺' : 'Continue ›';
+            storyBackBtn.disabled = false;
+        }
+
+        function openOverlay(idx) {
+            currentStorySlide = idx;
+            renderSlide(idx);
+            storyOverlay.classList.add('active');
+        }
+
+        function closeStory() {
+            stopAllMiniGol();
+            storyOverlay.classList.remove('active');
+        }
+
+        // ------ Story button: slide 0 draws on canvas, then opens overlay ------
+        storyBtn.addEventListener('click', () => {
+            if (currentStorySlide === -1) {
+                // First click: draw canvas text
+                stopConway();
+                cells.clear();
+                generation = 0;
+                updateCounter();
+                renderConway();
+                const cols = Math.max(1, Math.floor(canvas.width / CELL));
+                const msg = 'Cellular Automata and Conways Game of Life';
+                const cellList = textToCellList(msg, 3, 4, Math.max(20, cols - 24));
+                animateStoryCells(cellList);
+                currentStorySlide = 0;
+                storyBtn.textContent = '✦ Continue Story';
+            } else {
+                // Subsequent clicks: open overlay at slide 0
+                currentStorySlide = 0;
+                openOverlay(0);
+            }
+        });
+
+        storyCloseBtn.addEventListener('click', closeStory);
+        storyBackdrop.addEventListener('click', closeStory);
+
+        storyNextBtn.addEventListener('click', () => {
+            const next = currentStorySlide + 1;
+            if (next >= SLIDES.length) {
+                closeStory();
+                currentStorySlide = -1;
+                storyBtn.textContent = '✦ Story';
+                seedConway();
+                startConway();
+            } else {
+                currentStorySlide = next;
+                renderSlide(currentStorySlide);
+            }
+        });
+
+        storyBackBtn.addEventListener('click', () => {
+            if (currentStorySlide > 0) {
+                currentStorySlide--;
+                renderSlide(currentStorySlide);
+            } else {
+                // Back from first overlay slide — close overlay, stay on canvas
+                closeStory();
+            }
+        });
+
+        function resetStoryButton() {
+            currentStorySlide = -1;
+            storyBtn.textContent = '✦ Story';
+            closeStory();
         }
 
         function initConwaySize() {
@@ -905,9 +1570,7 @@
             seedConway();
             resetStoryButton();
         });
-        storyBtn.addEventListener('click', () => {
-            runStoryStage();
-        });
+        // storyBtn click is now handled by the story overlay system below
 
         function getGridCellFromPointer(e) {
             const rect = canvas.getBoundingClientRect();
