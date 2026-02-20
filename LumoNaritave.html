@@ -9,13 +9,13 @@
 
     <style vid="8">
         :root {
-            --c-bg-base: #fdf2e9;
-            --c-bg-overlay: rgba(230, 126, 34, 0.05);
-            --c-text-main: #4a2c2a;
-            --c-text-muted: #8e6d6b;
-            --c-accent: #e67e22;
-            --c-secondary-accent: #ff7f50;
-            --c-golden: #f39c12;
+            --c-bg-base: #0a0f0a;
+            --c-bg-overlay: rgba(0, 255, 100, 0.03);
+            --c-text-main: #b8ffcc;
+            --c-text-muted: #5a8f6a;
+            --c-accent: #00ff6a;
+            --c-secondary-accent: #39ff85;
+            --c-golden: #00c94a;
             
             --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
             
@@ -83,7 +83,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            border-bottom: 1px solid rgba(142, 109, 107, 0.1);
+            border-bottom: 1px solid rgba(0, 255, 106, 0.1);
             padding-bottom: 1.5rem;
             margin-bottom: 6rem;
         }
@@ -142,7 +142,7 @@
             position: relative;
             margin: 10rem 0;
             padding-left: 2rem;
-            border-left: 1px solid rgba(230, 126, 34, 0.2);
+            border-left: 1px solid rgba(0, 255, 106, 0.15);
         }
 
         .timeline-item {
@@ -197,7 +197,7 @@
 
         .team-image-container {
             aspect-ratio: 4/5;
-            background: #e8ded4;
+            background: #1a2a1a;
             margin-bottom: 1.5rem;
             position: relative;
             overflow: hidden;
@@ -256,12 +256,13 @@
         .cursor-outline {
             position: fixed;
             top: 0; left: 0; width: 40px; height: 40px;
-            border: 1px solid rgba(230, 126, 34, 0.4);
+            border: 1px solid rgba(0, 255, 106, 0.4);
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            mix-blend-mode: screen;
         }
 
         @keyframes fadeInSlow {
@@ -283,11 +284,11 @@
     <div class="ui-layer" vid="12">
         
         <header class="header-top" vid="13">
-            <a href="/" class="brand" vid="14">LUMO studios</a>
+            <a href="index.html" class="brand" vid="14">LUMO Studios</a>
             <nav style="display: flex; gap: 3rem;" vid="15">
-                <a href="#" class="nav-text" vid="16">Projects</a>
-                <a href="#" class="nav-text" vid="17" style="color: var(--c-accent);">About</a>
-                <a href="#" class="nav-text" vid="18">Capabilities</a>
+                <a href="LumoCuratedArchive.html" class="nav-text" vid="16">Projects</a>
+                <a href="LumoNaritave.html" class="nav-text" vid="17" style="color: var(--c-accent);">About</a>
+                <a href="LumoCapabilitites.html" class="nav-text" vid="18">Capabilities</a>
             </nav>
         </header>
 
@@ -349,7 +350,7 @@
             </div>
         </section>
 
-        <footer style="margin-top: 8rem; border-top: 1px solid rgba(142, 109, 107, 0.1); padding-top: 4rem; padding-bottom: 4rem;" vid="56">
+        <footer style="margin-top: 8rem; border-top: 1px solid rgba(0, 255, 106, 0.1); padding-top: 4rem; padding-bottom: 4rem;" vid="56">
             <div style="display: flex; justify-content: center;" vid="57">
                 <a href="#" class="nav-text" style="font-size: 0.9rem; letter-spacing: 0.3em;" vid="58">Work With Us</a>
             </div>
@@ -401,14 +402,14 @@
             el.addEventListener('mouseenter', () => {
                 cursorOutline.style.width = '70px';
                 cursorOutline.style.height = '70px';
-                cursorOutline.style.borderColor = '#e67e22';
-                cursorOutline.style.background = 'rgba(230, 126, 34, 0.05)';
+                cursorOutline.style.borderColor = '#00ff6a';
+                cursorOutline.style.backgroundColor = 'rgba(0, 255, 106, 0.05)';
             });
             el.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
-                cursorOutline.style.borderColor = 'rgba(230, 126, 34, 0.4)';
-                cursorOutline.style.background = 'transparent';
+                cursorOutline.style.borderColor = 'rgba(0, 255, 106, 0.4)';
+                cursorOutline.style.backgroundColor = 'transparent';
             });
         });
 

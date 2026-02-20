@@ -17,13 +17,13 @@
 
     <style vid="9">
         :root {
-            --c-bg-base: #fdf2e9;
-            --c-bg-overlay: rgba(230, 126, 34, 0.05);
-            --c-text-main: #4a2c2a;
-            --c-text-muted: #8e6d6b;
-            --c-accent: #e67e22;
-            --c-secondary-accent: #ff7f50;
-            --c-golden: #f39c12;
+            --c-bg-base: #0a0f0a;
+            --c-bg-overlay: rgba(0, 255, 100, 0.03);
+            --c-text-main: #b8ffcc;
+            --c-text-muted: #5a8f6a;
+            --c-accent: #00ff6a;
+            --c-secondary-accent: #39ff85;
+            --c-golden: #00c94a;
             
             --ease-fluid: cubic-bezier(0.2, 0.0, 0.2, 1);
             
@@ -101,7 +101,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            border-bottom: 1px solid rgba(142, 109, 107, 0.2);
+            border-bottom: 1px solid rgba(0, 255, 106, 0.15);
             padding-bottom: 1.5rem;
             margin-bottom: 6rem;
         }
@@ -120,7 +120,7 @@
         
         .nav-text:hover, .nav-text.active {
             color: var(--c-accent);
-            text-shadow: 0 0 8px rgba(230, 126, 34, 0.4);
+            text-shadow: 0 0 8px rgba(0, 255, 106, 0.5);
         }
 
         .brand {
@@ -168,7 +168,7 @@
         }
 
         .capability-item {
-            border-top: 1px solid rgba(142, 109, 107, 0.2);
+            border-top: 1px solid rgba(0, 255, 106, 0.15);
             padding-top: 3rem;
             display: grid;
             grid-template-columns: 1fr 1.5fr;
@@ -220,7 +220,7 @@
             font-family: var(--font-mono);
             font-size: 0.65rem;
             padding: 0.4rem 1rem;
-            border: 1px solid rgba(142, 109, 107, 0.3);
+            border: 1px solid rgba(0, 255, 106, 0.25);
             text-transform: uppercase;
             border-radius: 20px;
             color: var(--c-text-muted);
@@ -230,7 +230,7 @@
         .tag:hover {
             border-color: var(--c-accent);
             color: var(--c-accent);
-            background: rgba(230, 126, 34, 0.05);
+            background: rgba(0, 255, 106, 0.05);
         }
 
         .coords {
@@ -256,13 +256,13 @@
         .cursor-outline {
             position: fixed;
             top: 0; left: 0; width: 40px; height: 40px;
-            border: 1px solid rgba(230, 126, 34, 0.4);
+            border: 1px solid rgba(0, 255, 106, 0.4);
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s;
-            mix-blend-mode: color-burn;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            mix-blend-mode: screen;
         }
         
         .cursor-outline::before, .cursor-outline::after {
@@ -294,10 +294,11 @@
     <div class="ui-layer" vid="14">
         
         <header class="header-top" vid="15">
-            <a href="index.html" class="nav-text brand" vid="16">LUMO studios</a>
+            <a href="index.html" class="nav-text brand" vid="16">LUMO Studios</a>
             <div style="display: flex; gap: 3rem;" vid="17">
-                <a href="#" class="nav-text" vid="18">Projects</a>
-                <a href="#" class="nav-text active" vid="19">Capabilities</a>
+                <a href="LumoCuratedArchive.html" class="nav-text" vid="18">Projects</a>
+                <a href="LumoCapabilitites.html" class="nav-text active" vid="19">Capabilities</a>
+                <a href="LumoNaritave.html" class="nav-text" vid="19">About</a>
             </div>
         </header>
 
@@ -376,7 +377,7 @@
         threeContainer.appendChild(renderer.domElement);
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xfdf2e9);
+        scene.background = new THREE.Color(0x0a0f0a);
 
         const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.01, 40);
         camera.position.set(0, 0, 1.2);
@@ -402,7 +403,7 @@
                 positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
                 positions[i3 + 2] = radius * Math.cos(phi);
 
-                const color = new THREE.Color(0xe67e22);
+                const color = new THREE.Color(0x00ff6a);
                 colors[i3] = color.r;
                 colors[i3 + 1] = color.g;
                 colors[i3 + 2] = color.b;
@@ -492,16 +493,18 @@
         });
 
         
-        document.querySelectorAll('.nav-text, .tag').forEach(el => {
+        document.querySelectorAll('.nav-text, .tag, .capability-item').forEach(el => {
             el.addEventListener('mouseenter', () => {
-                cursorOutline.style.width = '60px';
-                cursorOutline.style.height = '60px';
-                cursorOutline.style.borderColor = '#e67e22';
+                cursorOutline.style.width = '70px';
+                cursorOutline.style.height = '70px';
+                cursorOutline.style.borderColor = '#00ff6a';
+                cursorOutline.style.backgroundColor = 'rgba(0, 255, 106, 0.05)';
             });
             el.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
-                cursorOutline.style.borderColor = 'rgba(230, 126, 34, 0.4)';
+                cursorOutline.style.borderColor = 'rgba(0, 255, 106, 0.4)';
+                cursorOutline.style.backgroundColor = 'transparent';
             });
         });
     </script>
